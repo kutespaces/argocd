@@ -1,0 +1,41 @@
+apiVersion: k3d.io/v1alpha5
+kind: Simple
+servers: 1
+network: k3d
+
+kubeAPI:
+  hostIP: "0.0.0.0"
+  hostPort: "6443"
+
+volumes:
+- volume: /workspaces:/workspaces
+  nodeFilters:
+  - server:*
+
+ports:
+- port: 8000:80 # same as `--port '8080:80@loadbalancer'`
+  nodeFilters:
+  - loadbalancer
+
+registries:
+  use:
+    - k3d-registry.localhost:5500
+
+options:
+  k3d:
+    wait: true
+    timeout: "90s"
+  k3s:
+    extraArgs:
+    - arg: --tls-san=127.0.0.1
+      nodeFilters:
+      - server:*
+    # Prevents the kubelet from evicting pods in case of low disk space
+    # See https://k3d.io/v5.0.1/faq/faq/
+    - arg: --kubelet-arg=eviction-hard=imagefs.available<1%,nodefs.available<1%
+      nodeFilters: [server:*, agent:*]
+    - arg: --kubelet-arg=eviction-minimum-reclaim=imagefs.available=1%,nodefs.available=1%
+      nodeFilters: [server:*, agent:*]
+  kubeconfig:
+    updateDefaultKubeconfig: true
+    switchCurrentContext: true

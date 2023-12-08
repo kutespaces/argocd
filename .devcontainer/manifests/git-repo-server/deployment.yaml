@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: git-repo-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: git-repo-server
+  template:
+    metadata:
+      labels:
+        app: git-repo-server
+    spec:
+      containers:
+      - name: git-repo-server
+        image: rockstorm/git-server
+        ports:
+        - containerPort: 22
+        volumeMounts:
+          - name: git
+            mountPath: /srv/git
+          - name: authorized-keys
+            mountPath: /home/git/.ssh/authorized_keys
+        readinessProbe:
+          tcpSocket:
+            port: 22
+          initialDelaySeconds: 2
+          periodSeconds: 10
+      volumes:
+      - name: git
+        hostPath:
+          path: /workspaces
+          type: Directory
+      - name: authorized-keys
+        hostPath:
+          path: /workspaces/argocd/.devcontainer/manifests/git-repo-server/authorized_keys
+          type: File

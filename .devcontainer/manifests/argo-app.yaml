@@ -1,0 +1,23 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: example-app
+  namespace: argocd
+spec:
+  source:
+    kustomize:
+      images:
+      - controller=k3d-registry.localhost:5500/some-image:latest
+    path: config/default
+    repoURL: git@git-repo-server.git-repo-server.svc.cluster.local:/srv/git/example-app
+    targetRevision: HEAD
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: default
+  project: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true

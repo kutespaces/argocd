@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: git-repo
+  labels:
+    argocd.argoproj.io/secret-type: repository
+stringData:
+  name: local-repo
+  project: default
+  type: git
+  url: git@git-repo-server.git-repo-server.svc.cluster.local:/srv/git/example-app
+  insecure: 'true'
+  # sshPrivateKey is a dummy key for the local Git+SSH connection to the repo. Not used for any non-dev case.
+  sshPrivateKey: |-
+    -----BEGIN OPENSSH PRIVATE KEY-----
+    b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAAAMwAAAAtzc2gtZW
+    QyNTUxOQAAACDRRUkIZm42WqrZvko73s+4Xt5JFMUaT20bl7qwcbrIBgAAAKAf8ClHH/Ap
+    RwAAAAtzc2gtZWQyNTUxOQAAACDRRUkIZm42WqrZvko73s+4Xt5JFMUaT20bl7qwcbrIBg
+    AAAEAb0SWq6mHx1dLEg+Q8NTra3KMAeY7hn2J1Qx11Y9rF0NFFSQhmbjZaqtm+Sjvez7he
+    3kkUxRpPbRuXurBxusgGAAAAGHZzY29kZUBjb2Rlc3BhY2VzLWZlM2EwNwECAwQF
+    -----END OPENSSH PRIVATE KEY-----

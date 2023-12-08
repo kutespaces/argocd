@@ -1,0 +1,94 @@
+{
+    "name": "Example Kutespace",
+    "image": "debian:bullseye",
+    "runArgs": [
+        "--init",
+        "--privileged"
+    ],
+    "overrideCommand": true,
+    "containerUser": "vscode",
+    "containerEnv": {
+        "EDITOR": "code --wait"
+    },
+    "customizations": {
+        "vscode": {
+            "settings": {
+                "terminal.integrated.defaultProfile.linux": "zsh",
+                "files.trimTrailingWhitespace": true,
+                "files.trimFinalNewlines": true,
+                "files.insertFinalNewline": true,
+                "workbench.welcomePage.walkthroughs.openOnInstall": false
+            },
+            "extensions": [
+                "golang.go",
+                "ms-azuretools.vscode-docker",
+                "ms-kubernetes-tools.vscode-kubernetes-tools",
+                "gruntfuggly.todo-tree",
+                "mutantdino.resourcemonitor",
+                "redhat.vscode-yaml",
+                "humao.rest-client"
+            ]
+        },
+        "codespaces": {
+            "openFiles": [
+                "docs/devcontainer.md"
+            ]
+        }
+    },
+    "hostRequirements": {
+        "cpus": 4
+    },
+    "forwardPorts": [
+        6060,
+        6443,
+        8000,
+        8080,
+        8081
+    ],
+    "portsAttributes": {
+        "6060": {
+            "label": "Godoc"
+        },
+        "6443": {
+            "label": "K8s API"
+        },
+        "8000": {
+            "label": "k3d Ingress"
+        },
+        "8080": {
+            "label": "Operator Metric Endpoint"
+        },
+        "8081": {
+            "label": "Operator Probe Endpoint"
+        }
+    },
+    "waitFor": "postCreateCommand",
+    "onCreateCommand": "/bin/bash -c .devcontainer/on-create.sh",
+    "features": {
+        "ghcr.io/devcontainers/features/common-utils:2": {
+            "configureZshAsDefaultShell": true,
+            "username": "vscode",
+            "userUid": 1000,
+            "userGid": 1000
+        },
+        "ghcr.io/devcontainers/features/docker-in-docker:2": {},
+        "ghcr.io/kutespaces/devcontainers-features/k3d:1": {
+            "version": "v5.6.0"
+        },
+        "ghcr.io/devcontainers-contrib/features/kubectl-asdf:2": {
+            "version": "1.25.9"
+        },
+        "ghcr.io/kutespaces/devcontainers-features/kubectx-kubens:1": {},
+        "ghcr.io/devcontainers-contrib/features/argo-cd:1": {},
+        "ghcr.io/devcontainers-contrib/features/pre-commit:2": {},
+    },
+    "overrideFeatureInstallOrder": [
+        "ghcr.io/devcontainers/features/common-utils",
+        "ghcr.io/devcontainers/features/docker-in-docker",
+        "ghcr.io/kutespaces/devcontainers-features/k3d",
+        "ghcr.io/devcontainers-contrib/features/kubectl-asdf",
+        "ghcr.io/kutespaces/devcontainers-features/kubectx-kubens",
+        "ghcr.io/devcontainers-contrib/features/argo-cd",
+        "ghcr.io/devcontainers-contrib/features/pre-commit",
+    ]
+}
