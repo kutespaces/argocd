@@ -1,6 +1,8 @@
 {
     "name": "Example Kutespace",
-    "image": "debian:bullseye",
+    "build": {
+        "dockerfile": "Dockerfile"
+    },
     "runArgs": [
         "--init",
         "--privileged"

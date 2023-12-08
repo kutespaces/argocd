@@ -38,10 +38,11 @@ main() {
   # Activate kubectl autocompletion for zsh. Not everybody wants to use k9s.
   echo 'source <(kubectl completion zsh)' >>~/.zshrc
   echo 'alias k=kubectl' >>~/.zshrc
-  source ~/.zshrc
 
   # Deploy k8s resources
   kubectl apply -k .devcontainer/manifests/argocd
+  # set argocd dasboard admin pw to admin
+  kubectl patch secret -n argocd argocd-secret -p '{"stringData": {"admin.password": "$2y$10$49UjmQBCYm406qFoLdyzhO72DKJ9JM7m3uAO70vvapSseAPf2ZTcy"}}'
   kubectl apply -k .devcontainer/manifests/git-repo-server
 
   echo "on-create end"
