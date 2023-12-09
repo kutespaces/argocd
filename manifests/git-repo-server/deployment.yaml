@@ -18,8 +18,8 @@ spec:
         ports:
         - containerPort: 22
         volumeMounts:
-          - name: git
-            mountPath: /srv/git
+          # - name: git
+          #   mountPath: /srv/git
           - name: authorized-keys
             mountPath: /home/git/.ssh/authorized_keys
         readinessProbe:
@@ -28,10 +28,10 @@ spec:
           initialDelaySeconds: 2
           periodSeconds: 10
       volumes:
-      - name: git
-        hostPath:
-          path: /workspaces
-          type: Directory
+      # - name: git
+      #   hostPath:
+      #     path: /workspaces
+      #     type: Directory
       - name: authorized-keys
         hostPath:
           path: /workspaces/argocd/.devcontainer/manifests/git-repo-server/authorized_keys
