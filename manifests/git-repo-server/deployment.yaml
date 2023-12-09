@@ -17,6 +17,9 @@ spec:
         image: rockstorm/git-server
         ports:
         - containerPort: 22
+        env:
+        - name: REPOSITORIES_HOME_LINK
+          value: /srv/git
         volumeMounts:
           # - name: git
           #   mountPath: /srv/git

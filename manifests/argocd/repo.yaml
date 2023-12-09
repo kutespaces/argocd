@@ -8,7 +8,7 @@ stringData:
   name: local-repo
   project: default
   type: git
-  url: git@git-repo-server.git-repo-server.svc.cluster.local:/srv/git/argocd
+  url: git@git-repo-server.git-repo-server.svc.cluster.local/argocd
   insecure: 'true'
   # sshPrivateKey is a dummy key for the local Git+SSH connection to the repo. Not used for any non-dev case.
   sshPrivateKey: |-
