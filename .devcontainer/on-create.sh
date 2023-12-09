@@ -44,6 +44,8 @@ main() {
   # set argocd dasboard admin pw to admin
   kubectl patch secret -n argocd argocd-secret -p '{"stringData": {"admin.password": "$2y$10$49UjmQBCYm406qFoLdyzhO72DKJ9JM7m3uAO70vvapSseAPf2ZTcy"}}'
   kubectl apply -k manifests/git-repo-server
+  # deploy app of apps which deploys all other apps
+  kubectl apply -f manifests/app-of-apps.yaml
 
   echo "on-create end"
   echo "$(date +'%Y-%m-%d %H:%M:%S')    on-create end" >> "$HOME/status"
