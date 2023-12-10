@@ -41,13 +41,9 @@ main() {
 
   # Deploy k8s resources
   kubectl apply -k manifests/argocd
-  # set argocd dasboard admin pw to admin
-  kubectl patch secret -n argocd argocd-secret -p '{"stringData": {"admin.password": "$2y$10$49UjmQBCYm406qFoLdyzhO72DKJ9JM7m3uAO70vvapSseAPf2ZTcy"}}'
   kubectl apply -k manifests/git-repo-server
+
   # deploy app of apps which deploys all other apps
-
-    
-
   ELAPSED_TIME=0
   # Wait for the CRD to be installed with a timeout
   until kubectl get crd applications.argoproj.io &> /dev/null || [ $ELAPSED_TIME -ge 60 ]; do

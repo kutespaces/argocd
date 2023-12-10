@@ -9,3 +9,5 @@ spec:
     - protocol: TCP
       port: 22
       targetPort: 22
+      nodePort: 30022
+  type: NodePort
