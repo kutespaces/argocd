@@ -3,3 +3,4 @@ kind: Kustomization
 resources:
   - podinfo/argocd-app.yaml
   - game-2048/argocd-app.yaml
+  - kanboard/argocd-app.yaml
