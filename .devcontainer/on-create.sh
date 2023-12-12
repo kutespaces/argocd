@@ -35,6 +35,8 @@ main() {
   echo "creating k3d cluster"
   k3d cluster create -c .devcontainer/k3d.yaml
 
+  cat ~/.kube/config > output/kubeconfig.yaml
+
   # Activate kubectl autocompletion for zsh. Not everybody wants to use k9s.
   echo 'source <(kubectl completion zsh)' >>~/.zshrc
   echo 'alias k=kubectl' >>~/.zshrc
@@ -53,7 +55,7 @@ main() {
   # Wait for the Git server to be ready with a timeout
   ELAPSED_TIME=0
   SERVER_URL="http://git.127.0.0.1.nip.io:8080/git/argocd/info/refs?service=git-receive-pack"
-  until curl -s -o /dev/null -w "%{http_code}" --connect-timeout 5 $SERVER_URL | grep -q "200" || [ $ELAPSED_TIME -ge 30 ]; do
+  until curl -s -o /dev/null -w "%{http_code}" --connect-timeout 5 $SERVER_URL | grep -q "200" || [ $ELAPSED_TIME -ge 90 ]; do
     echo "Waiting for Git server to be ready..."
     sleep 5
     ELAPSED_TIME=$((ELAPSED_TIME+5))
@@ -61,7 +63,6 @@ main() {
   git push -u origin main
 
   kubectl apply -k manifests/argocd
-
   # deploy app of apps which deploys all other apps
   # replace with kubectl wait --for=condition=established crd/your-crd-name --timeout=60s
   # Wait for the argocd application CRD to be installed with a timeout
