@@ -5,5 +5,6 @@ namespace: podinfo
 
 resources:
   - resources/namespace.yaml
-  - github.com/stefanprodan/podinfo/kustomize
+  - resources/deployment.yaml
+  - resources/service.yaml
   - resources/ingress.yaml

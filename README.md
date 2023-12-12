@@ -56,21 +56,26 @@ manifests/app-of-apps.yaml
 
 ### Checkout Podinfo Service
 - checkout podinfo
-- modify env variable and view that it syncs
-- podinfo.127.0.0.1.nip.io
-- manifests/podinfo
-
-### Check out game 2048
-- checkout game-2048
-- game-2048.127.0.0.1.nip.io
-- manifests/game-2048
+    - modify env variable and view that it syncs
+    - podinfo.127.0.0.1.nip.io
+    - manifests/podinfo
 
 - increase replicas to 2
 - check that 2 replicas exist via cli and via kubernetes dashboard
-- destroy something
+
+### Check out game 2048
+- checkout game-2048
+    - game-2048.127.0.0.1.nip.io
+    - manifests/game-2048
+
 
 ### Deploy own application
-TODO
+deploy this simple kanban board on your own. Check it out in the browser afterwards.
+https://docs.kanboard.org/v1/admin/docker/
+default user password is admin:admin
+
+don't forget to add the argocd application manifest to the app-of-apps.
+this will make the app of apps sync it too
 
 ### Present repo structure for real world projects
 TODO
