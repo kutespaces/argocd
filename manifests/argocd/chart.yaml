@@ -19,6 +19,8 @@ spec:
         createSecret: false
       params:
         server.insecure: true
+        cm:
+          timeout.reconciliation: 15s
     notifications:
       enabled: false
     dex:

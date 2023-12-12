@@ -41,28 +41,16 @@
         "cpus": 4
     },
     "forwardPorts": [
-        6060,
         6443,
-        8000,
         8080,
-        8081
     ],
     "portsAttributes": {
-        "6060": {
-            "label": "Godoc"
-        },
         "6443": {
             "label": "K8s API"
         },
-        "8000": {
+        "8080": {
             "label": "k3d Ingress"
         },
-        "8080": {
-            "label": "Operator Metric Endpoint"
-        },
-        "8081": {
-            "label": "Operator Probe Endpoint"
-        }
     },
     "waitFor": "postCreateCommand",
     "onCreateCommand": "/bin/bash -c .devcontainer/on-create.sh",
