@@ -7,7 +7,7 @@ metadata:
     ingress.kubernetes.io/ssl-redirect: "false"
 spec:
   rules:
-  - host: "podinfo.127.0.0.1.nip.io"
+  - host: "podinfo123.127.0.0.1.nip.io"
     http:
       paths:
       - path: /
