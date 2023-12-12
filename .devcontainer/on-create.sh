@@ -64,8 +64,8 @@ main() {
 
   # deploy app of apps which deploys all other apps
   # replace with kubectl wait --for=condition=established crd/your-crd-name --timeout=60s
+  # Wait for the argocd application CRD to be installed with a timeout
   ELAPSED_TIME=0
-  # Wait for the CRD to be installed with a timeout
   until kubectl get crd applications.argoproj.io &> /dev/null || [ $ELAPSED_TIME -ge 90 ]; do
     echo "Waiting for Argo CD Application CRD to be installed..."
     sleep 5

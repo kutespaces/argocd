@@ -35,3 +35,14 @@ Dannach kann man
 1. es ggf. schon rausballern mit LinkedIn Posts und schauen obs Leuten gefällt.
 2. wenns Leuten gefällt bei ArgoCD nachhaken was man tun müsste damit die es publishen.
 3. anderen Repos schicken und fragen ob die sowas für sich haben möchten.
+
+
+
+# WALKTHROUGH
+
+1. checkout dashboard
+2. checkout app of apps
+4. checkout podinfo
+3. checkout game-2048
+5. deploy own app in new folder
+6. repo structure for real world projects
