@@ -35,6 +35,7 @@ main() {
   echo "creating k3d cluster"
   k3d cluster create -c .devcontainer/k3d.yaml
 
+  mkdir -p output
   cat ~/.kube/config > output/kubeconfig.yaml
 
   # Activate kubectl autocompletion for zsh. Not everybody wants to use k9s.
@@ -63,9 +64,8 @@ main() {
   git push -u origin main
 
   kubectl apply -k manifests/argocd
-  # deploy app of apps which deploys all other apps
-  # replace with kubectl wait --for=condition=established crd/your-crd-name --timeout=60s
-  # Wait for the argocd application CRD to be installed with a timeout
+
+  # Wait for the argocd application CRD to be installed
   ELAPSED_TIME=0
   until kubectl get crd applications.argoproj.io &> /dev/null || [ $ELAPSED_TIME -ge 90 ]; do
     echo "Waiting for Argo CD Application CRD to be installed..."

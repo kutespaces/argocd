@@ -1,44 +1,6 @@
-# Notes
+# Kutespace: Argo CD
 
-Problem: this is already a git repository but we may need another remote to push it to a local server thats connected to argocd. Maybe change remote during devcontainer creation.
-
-Problem: it's a little weird that the user just has to commit but not to push.
-
-Check out this repo: https://github.com/rockstorm101/gitweb-docker. Maybe we can just use this lightweight container to visualize all repositories in `workspaces`. It also allows unauthenticated access to http to pull the repos.
-
-Upsides:
-- user doesn't need to push at all
-Downsides:
-- we need to adjust pull frequency of argocd
-
-Alternative:
-
-- use other git server with ui.
-
-
-
-Message an Felix:
-
-Next steps bevor man es rausschicken kann:
-
-- finde die ux weird mit commiten aber nicht pushen. Würde das gerne 1:1 haben wie bei in echt. Passt dir das?
-- muss noch k9s installieren (gab errors mit dem feature)
-- ggf. schauen dass man sowas wie lens connecten kann.
-- würde gerne noch ein real-world setup mit mehreren stages präsentieren. Da kannst du mir nochmal die Struktur von charles mit kustomize schicken bzw. deinen aktuellen Favorite.
-- geile Readme schreiben mit so ner Art Missionen / Guidance aber halt einfach als Markdown runterschreiben.
-- ggf. DNS von devcontainer und pods verbinden dann kann man direkt auf alles zugreifen
-
-Fehlt da noch was?
-
-Dannach kann man
-
-1. es ggf. schon rausballern mit LinkedIn Posts und schauen obs Leuten gefällt.
-2. wenns Leuten gefällt bei ArgoCD nachhaken was man tun müsste damit die es publishen.
-3. anderen Repos schicken und fragen ob die sowas für sich haben möchten.
-
-
-
-# NEW GITHUB README
+Spin up a fully configured learning environment for Argo CD in seconds.
 
 ## Into
 - what is this thing? kutespaces?
@@ -46,7 +8,18 @@ Dannach kann man
 - read about all components in section components
 - or directly jump into the tasks
 
+## Setup
+
+Start a new Codespace directly from Github. Please start the Codespace in a local VSCode. In-browser execution is not supported yet.
+
+![Start Codespace](docs/images/start-codespace.jpg)
+
+
 ## Components
+
+### Devcontainer / Codespaces
+
+GitHub Codespaces is an online development environment that lets you code inside a remote VM with no setup needed. Devcontainers are a part of this service, providing pre-configured coding environments in containers. With devcontainers, you can set up everything a developer needs, like tools and extensions, so anyone can start coding immediately, ensuring consistency across all team members' workspaces.
 
 ### k3d
 k3d fully functional kubernetes cluster
@@ -58,6 +31,16 @@ we use nip.io to get different dns domain names that all map to localhost. Howev
 
 ### Argo CD
 
+Argo CD automates the deployment and lifecycle management of your applications in Kubernetes by syncing them with configurations stored in a Git repository. When you make changes to your application's configuration and push them to the Git repository, Argo CD detects these changes and applies them to your Kubernetes cluster, ensuring that your live applications always match what's specified in your repository.
+
+This approach has several benefits:
+
+Version Control: Since your configurations are stored in Git, you have a complete history of changes, and you can roll back to previous versions if needed.
+Consistency: By using the same configurations from development to production, you avoid discrepancies between environments.
+Automation: Manual deployment steps are reduced, which minimizes the risk of human error and saves time.
+Self-healing: If something changes in your live environment that doesn't match the repository, Argo CD can automatically correct it.
+
+More Information: https://argo-cd.readthedocs.io/en/stable/
 
 ## Tasks
 
@@ -73,17 +56,25 @@ manifests/app-of-apps.yaml
 
 ### Checkout Podinfo Service
 - checkout podinfo
-- modify env variable and view it
+- modify env variable and view that it syncs
 - podinfo.127.0.0.1.nip.io
-manifests/podinfo
+- manifests/podinfo
 
 ### Check out game 2048
 - checkout game-2048
 - game-2048.127.0.0.1.nip.io
 - manifests/game-2048
 
+- increase replicas to 2
+- check that 2 replicas exist via cli and via kubernetes dashboard
+- destroy something
+
 ### Deploy own application
-- deploy own app in new folder
+TODO
 
 ### Present repo structure for real world projects
-- repo structure for real world projects
+TODO
+
+## Troubleshooting
+
+You are facing issues? Let us know to help the next person facing the same issue.
