@@ -44,24 +44,32 @@ main() {
 
   # install local git server and configure git client to use it
   kubectl apply -k manifests/git-repo-server
-  # Check if the 'origin' remote is set to the local git server
-  EXPECTED_URL="http://git.127.0.0.1.nip.io:8080/git/argocd"
-  CURRENT_URL=$(git remote get-url origin 2>/dev/null)
-  if [ "$CURRENT_URL" != "$EXPECTED_URL" ]; then
-    git remote rename origin github
-    git remote add origin http://git.127.0.0.1.nip.io:8080/git/argocd
+
+  GIT_REMOTE_URL="http://git.127.0.0.1.nip.io:8080/git/manifests"
+
+  # Change to the repository directory
+  pushd "./manifests" > /dev/null
+
+  # Initialize the repository if it's not already initialized and add the remote
+  if [ ! -d ".git" ]; then
+      git init
+      git remote add origin "$GIT_REMOTE_URL"
   fi
 
+  git add -A
+  git diff --staged --quiet || git commit -m "Initial commit"
 
   # Wait for the Git server to be ready with a timeout
   ELAPSED_TIME=0
-  SERVER_URL="http://git.127.0.0.1.nip.io:8080/git/argocd/info/refs?service=git-receive-pack"
-  until curl -s -o /dev/null -w "%{http_code}" --connect-timeout 5 $SERVER_URL | grep -q "200" || [ $ELAPSED_TIME -ge 90 ]; do
+  until curl -s -o /dev/null -w "%{http_code}" --connect-timeout 5 $GIT_REMOTE_URL/info/refs?service=git-receive-pack | grep -q "200" || [ $ELAPSED_TIME -ge 90 ]; do
     echo "Waiting for Git server to be ready..."
     sleep 5
     ELAPSED_TIME=$((ELAPSED_TIME+5))
   done
   git push -u origin main
+  # Change back to the original directory
+  popd > /dev/null
+
 
   kubectl apply -k manifests/argocd
 
@@ -72,17 +80,10 @@ main() {
     sleep 5
     ELAPSED_TIME=$((ELAPSED_TIME+5))
   done
-  ELAPSED_TIME=0
-  SERVER_URL="http://git.127.0.0.1.nip.io:8080/git/argocd/info/refs?service=git-receive-pack"
-  until curl -s -o /dev/null -w "%{http_code}" --connect-timeout 5 $SERVER_URL | grep -q "200" || [ $ELAPSED_TIME -ge 90 ]; do
-    echo "Waiting for argocd repo server to be ready..."
-    sleep 5
-    ELAPSED_TIME=$((ELAPSED_TIME+5))
-  done
   echo "Waiting for argocd repo server to be ready"
   kubectl wait --namespace argocd --for=condition=Ready pod -l app.kubernetes.io/component=repo-server,app.kubernetes.io/instance=argocd --timeout=30s
   echo "Argocd repo server is ready"
-  kubectl apply -f manifests/app-of-apps.yaml
+  kubectl apply -f manifests/app-of-apps/argocd-app.yaml
 
   echo "on-create end"
   echo "$(date +'%Y-%m-%d %H:%M:%S')    on-create end" >> "$HOME/status"

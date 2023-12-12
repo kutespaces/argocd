@@ -19,8 +19,8 @@ spec:
         - sh
         - -c
         - |
-          git init --bare /git/argocd.git
-          cd /git/argocd.git
+          git init --bare /git/manifests.git
+          cd /git/manifests.git
           git symbolic-ref HEAD refs/heads/main
           git config http.receivepack true
         volumeMounts:
@@ -34,7 +34,7 @@ spec:
           mountPath: /git
         readinessProbe:
           httpGet:
-            path: /git/argocd/info/refs?service=git-receive-pack
+            path: /git/manifests/info/refs?service=git-receive-pack
             port: 80
       volumes:
       - name: git-repo-volume

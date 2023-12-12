@@ -1,3 +1,8 @@
+# TODO
+
+- Rework Tasks: Introduce pattern to specify tasks and always tell the user what he is expected to see or how to verify it worked.
+- Restructure app-of-apps into it's own folder. Then it's easier to understand that it belongs together with the kustomization.yaml
+
 # Kutespace: Argo CD
 
 Spin up a fully configured learning environment for Argo CD in seconds.
@@ -45,8 +50,9 @@ More Information: https://argo-cd.readthedocs.io/en/stable/
 ## Tasks
 
 ### Checkout ArgoCD Dashboard
-- argocd.127.0.0.1.nip.io:8080
+- argocd.127.0.0.1.nip.io:<FORWARDED K3D INGRESS PORT>
 - check out the port mappings to see how to access port 8080 of this space with you browser.
+- log in with admin:admin
 
 ![Image](docs/images/portforwarding.jpg)
 
@@ -57,7 +63,7 @@ manifests/app-of-apps.yaml
 ### Checkout Podinfo Service
 - checkout podinfo
     - modify env variable and view that it syncs
-    - podinfo.127.0.0.1.nip.io
+    - podinfo.127.0.0.1.nip.io:<FORWARDED K3D INGRESS PORT>
     - manifests/podinfo
 
 - increase replicas to 2
@@ -67,7 +73,7 @@ manifests/app-of-apps.yaml
 
 ### Check out game 2048
 - checkout game-2048
-    - game-2048.127.0.0.1.nip.io
+    - game-2048.127.0.0.1.nip.io:<FORWARDED K3D INGRESS PORT>
     - manifests/game-2048
 
 
@@ -85,3 +91,5 @@ TODO
 ## Troubleshooting
 
 You are facing issues? Let us know to help the next person facing the same issue.
+
+argocd.127.0.0.1 dns can not be resolved. Some dns servers don't resolve DNS entries that point to localhost or 127.0.0.1. Change to something like 8.8.8.8 (google) or 1.1.1.1 (cloudflare)

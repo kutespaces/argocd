@@ -8,5 +8,5 @@ stringData:
   name: local-repo
   project: default
   type: git
-  url: http://git-repo-server.git-repo-server.svc.cluster.local:/git/argocd
+  url: http://git-repo-server.git-repo-server.svc.cluster.local:/git/manifests
   insecure: 'true'
