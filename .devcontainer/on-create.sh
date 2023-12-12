@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -euxo pipefail
+set -euo pipefail
 [[ -n "${TRACE:-}" ]] && set -x
 DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 
@@ -72,6 +72,16 @@ main() {
     sleep 5
     ELAPSED_TIME=$((ELAPSED_TIME+5))
   done
+  ELAPSED_TIME=0
+  SERVER_URL="http://git.127.0.0.1.nip.io:8080/git/argocd/info/refs?service=git-receive-pack"
+  until curl -s -o /dev/null -w "%{http_code}" --connect-timeout 5 $SERVER_URL | grep -q "200" || [ $ELAPSED_TIME -ge 90 ]; do
+    echo "Waiting for argocd repo server to be ready..."
+    sleep 5
+    ELAPSED_TIME=$((ELAPSED_TIME+5))
+  done
+  echo "Waiting for argocd repo server to be ready"
+  kubectl wait --namespace argocd --for=condition=Ready pod -l app.kubernetes.io/component=repo-server,app.kubernetes.io/instance=argocd --timeout=30s
+  echo "Argocd repo server is ready"
   kubectl apply -f manifests/app-of-apps.yaml
 
   echo "on-create end"
