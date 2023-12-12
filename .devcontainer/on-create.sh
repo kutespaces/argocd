@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -euo pipefail
+set -euxo pipefail
 [[ -n "${TRACE:-}" ]] && set -x
 DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 
@@ -39,17 +39,37 @@ main() {
   echo 'source <(kubectl completion zsh)' >>~/.zshrc
   echo 'alias k=kubectl' >>~/.zshrc
 
-  # Deploy k8s resources
-  kubectl apply -k manifests/argocd
+  # install local git server and configure git client to use it
   kubectl apply -k manifests/git-repo-server
+  # Check if the 'origin' remote is set to the local git server
+  EXPECTED_URL="http://git.127.0.0.1.nip.io:8080/git/argocd"
+  CURRENT_URL=$(git remote get-url origin 2>/dev/null)
+  if [ "$CURRENT_URL" != "$EXPECTED_URL" ]; then
+    git remote rename origin github
+    git remote add origin http://git.127.0.0.1.nip.io:8080/git/argocd
+  fi
+
+
+  # Wait for the Git server to be ready with a timeout
+  ELAPSED_TIME=0
+  SERVER_URL="http://git.127.0.0.1.nip.io:8080/git/argocd/info/refs?service=git-receive-pack"
+  until curl -s -o /dev/null -w "%{http_code}" --connect-timeout 5 $SERVER_URL | grep -q "200" || [ $ELAPSED_TIME -ge 30 ]; do
+    echo "Waiting for Git server to be ready..."
+    sleep 5
+    ELAPSED_TIME=$((ELAPSED_TIME+5))
+  done
+  git push -u origin main
+
+  kubectl apply -k manifests/argocd
 
   # deploy app of apps which deploys all other apps
+  # replace with kubectl wait --for=condition=established crd/your-crd-name --timeout=60s
   ELAPSED_TIME=0
   # Wait for the CRD to be installed with a timeout
-  until kubectl get crd applications.argoproj.io &> /dev/null || [ $ELAPSED_TIME -ge 60 ]; do
+  until kubectl get crd applications.argoproj.io &> /dev/null || [ $ELAPSED_TIME -ge 90 ]; do
     echo "Waiting for Argo CD Application CRD to be installed..."
-    sleep 10
-    ELAPSED_TIME=$((ELAPSED_TIME+10))
+    sleep 5
+    ELAPSED_TIME=$((ELAPSED_TIME+5))
   done
   kubectl apply -f manifests/app-of-apps.yaml
 

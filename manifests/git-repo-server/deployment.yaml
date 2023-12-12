@@ -12,30 +12,30 @@ spec:
       labels:
         app: git-repo-server
     spec:
+      initContainers:
+      - name: init-repo
+        image: alpine/git
+        command:
+        - sh
+        - -c
+        - |
+          git init --bare /git/argocd.git
+          cd /git/argocd.git
+          git symbolic-ref HEAD refs/heads/main
+          git config http.receivepack true
+        volumeMounts:
+        - name: git-repo-volume
+          mountPath: /git
       containers:
       - name: git-repo-server
-        image: rockstorm/git-server
-        ports:
-        - containerPort: 22
-        env:
-        - name: REPOSITORIES_HOME_LINK
-          value: /srv/git
+        image: ghcr.io/kutespaces/simple-git-http-server:latest
         volumeMounts:
-          # - name: git
-          #   mountPath: /srv/git
-          - name: authorized-keys
-            mountPath: /home/git/.ssh/authorized_keys
+        - name: git-repo-volume
+          mountPath: /git
         readinessProbe:
-          tcpSocket:
-            port: 22
-          initialDelaySeconds: 2
-          periodSeconds: 10
+          httpGet:
+            path: /git/argocd/info/refs?service=git-receive-pack
+            port: 80
       volumes:
-      # - name: git
-      #   hostPath:
-      #     path: /workspaces
-      #     type: Directory
-      - name: authorized-keys
-        hostPath:
-          path: /workspaces/argocd/.devcontainer/manifests/git-repo-server/authorized_keys
-          type: File
+      - name: git-repo-volume
+        emptyDir: {}

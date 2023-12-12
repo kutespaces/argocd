@@ -7,7 +7,5 @@ spec:
     app: git-repo-server
   ports:
     - protocol: TCP
-      port: 22
-      targetPort: 22
-      nodePort: 30022
-  type: NodePort
+      port: 80
+      targetPort: 80
