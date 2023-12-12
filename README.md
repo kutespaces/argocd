@@ -63,6 +63,8 @@ manifests/app-of-apps.yaml
 - increase replicas to 2
 - check that 2 replicas exist via cli and via kubernetes dashboard
 
+- don't forget to refresh in the argocd ui
+
 ### Check out game 2048
 - checkout game-2048
     - game-2048.127.0.0.1.nip.io
