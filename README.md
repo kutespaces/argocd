@@ -1,8 +1,3 @@
-# TODO
-
-- Rework Tasks: Introduce pattern to specify tasks and always tell the user what he is expected to see or how to verify it worked.
-- Restructure app-of-apps into it's own folder. Then it's easier to understand that it belongs together with the kustomization.yaml
-
 # Kutespace: Argo CD
 
 Spin up a fully preconfigured learning environment with Kubernetes & Argo CD. Start the first excercise now.
