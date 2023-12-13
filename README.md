@@ -69,25 +69,87 @@ Next, we want to try out the GitOps workflow. The folder `./manifests` contains 
 3. add, commit and push your changes. Make sure you are located inside the nested git repository `./manifests` when you perform these steps.
 4. Execute `watch kubectl get pods -n podinfo` to see how a rolling update is performed by starting a new pod and then terminating the old pod.
 5. Wait for up to 3 minutes or refresh the app podinfo inside the Argo CD dashboard in your browser to trigger the Argo CD sync of the changes into your cluster.
-6. Notice how the background of the podinfo app turned yellow: ![](image.png)
+6. Notice how the background of the podinfo app turned gold: ![](image.png)
 
-7. (Optional) Try out to change the displayed message by setting the env variable: PODINFO_UI_MESSAGE.
+### Rollback Changes
+
+One of main benefits of the GitOps approach is that our cluster mirrors whats in our git repository. So let's assume we don't like the golden background for podinfo. Let's revert it:
+
+1. Execute `git log` and copy the last commit hash.
+2. Execute `git revert <COMMIT HASH> && git push`.
+3. Refresh the podinfo argo cd app in the dashboard again to speed up the process.
+4. Wait until the old pod is replaced and traffic is redirected to the newly spawned pod.
+5. Watch how podinfo shines in jade again.
 
 ### GitOps End2End Workflow
-The repository is linked to Argo CD already. I.e. any changes you push to the local git server will be synced to your cluster automatically.
 
+In the previous task, we updated a kubernetes resource yaml file, pushed the change to our git server and it got applied automatically. Let's dive deeper into how that works exactly.
 
-The app of apps pattern is a common pattern to
-- checkout app of apps
-manifests/app-of-apps.yaml
+**Git Server**
+
+`./manifests/git-repo-server` contains manifests that we used to spin up a git server in the Kubernetes cluster.
+
+**Argo CD**
+
+`./manifests/argocd` contains manifests that we used to spin up Argo CD in the Kubernetes cluster. The file `repo.yaml` looks as follows:
+
+```
+apiVersion: v1
+kind: Secret
+metadata:
+  name: git-repo
+  labels:
+    argocd.argoproj.io/secret-type: repository
+stringData:
+  name: local-repo
+  project: default
+  type: git
+  url: http://git-repo-server.git-repo-server.svc.cluster.local:/git/manifests
+  insecure: 'true'
+```
+
+It accesses the git server via it's Kubernetes internal DNS name. Specificially it links to the git repository called `manifests`. This manifests tells Argo CD how to access the manifests repository. I.e. if the repository would be accessed via SSH, the yaml would contain an SSH key.
+
+**Argo CD Application**
+
+Argo CD applications are a custom resource that refers to a folder at a specific revision/branch in your git repository. It basically tells Argo CD what it should deploy.
+
+When spinning up the cluster, we deployed the Argo CD application `./manifests/app-of-apps.yaml`.
+
+```
+# app-of-apps.yaml
+...
+source:
+  path: argocd-apps
+  repoURL: http://git-repo-server.git-repo-server.svc.cluster.local:/git/manifests
+  targetRevision: main
+...
+```
+
+It links to the folder `./manifests/argocd-apps`, which contains even more apps. We call that pattern app of apps. It enables us to deploy a single app which in return deploys our other apps which in return deploy resources.
+
+`./manifests/argocd-apps` defines an Argo CD application in `podinfo.yaml`.
+
+```
+source:
+  path: podinfo
+  repoURL: http://git-repo-server.git-repo-server.svc.cluster.local:/git/manifests
+  targetRevision: main
+```
+
+The argo cd application instructs Argo CD to look into the folder ./manifests/podinfo. `./manifests/podinfo` contains the manifests for our podinfo application.
+
+Take your time to check to inspect the files and try to retrace each step.
 
 ### Check out game 2048
-- checkout game-2048
-    - game-2048.127.0.0.1.nip.io:<FORWARDED K3D INGRESS PORT>
-    - manifests/game-2048
 
+That was a lot. Let's take a quick break and check out `http://game-2048.127.0.0.1.nip.io:<FORWARDED K3D INGRESS PORT>`. You should see the game 2048, which was deployed in the same manner as podinfo. The manifests reside in `./manifests/game-2048`
+
+<img src='docs/images/2048.png' width='50%'>
 
 ### Deploy own application
+
+Finally
 deploy this simple kanban board on your own. Check it out in the browser afterwards.
 https://docs.kanboard.org/v1/admin/docker/
 default user password is admin:admin
@@ -96,10 +158,24 @@ don't forget to add the argocd application manifest to the app-of-apps.
 this will make the app of apps sync it too
 
 ### Present repo structure for real world projects
-TODO
+
+```
+├── app-configs
+│   ├── Production
+│   ├── Staging
+│   └── README.md
+└── manifests
+    ├── README.md
+    └── application-name
+        ├── base
+        ├── production
+        └── staging
+```
 
 ## Troubleshooting
 
 You are facing issues? Let us know to help the next person facing the same issue.
+
+### DNS Resolution
 
 argocd.127.0.0.1 dns can not be resolved. Some dns servers don't resolve DNS entries that point to localhost or 127.0.0.1. Change to something like 8.8.8.8 (google) or 1.1.1.1 (cloudflare)
