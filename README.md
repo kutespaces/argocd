@@ -1,4 +1,3 @@
-```markdown
 # Kutespace: Argo CD
 
 Welcome to Kutespace's Argo CD repository! This guide will help you spin up a fully preconfigured learning environment with Kubernetes & Argo CD. Dive into the exercises and start your Kubernetes journey.
@@ -7,7 +6,7 @@ Welcome to Kutespace's Argo CD repository! This guide will help you spin up a fu
 
 To begin, launch a new Codespace directly from GitHub. Ensure you start the Codespace in a local VSCode instance, as in-browser execution is not currently supported.
 
-![Start Codespace](docs/images/start-codespace.jpg)
+<img src='docs/images/start-codespace.jpg' width='50%'>
 
 ## Exercises
 
@@ -33,11 +32,11 @@ Ensure the pod statuses are 'Completed' or 'Running'.
 
 Access the Argo CD dashboard through your browser. The URL format is `http://argocd.127.0.0.1.nip.io:<FORWARDED K3D INGRESS PORT>`. The load balancer listens on port 8080, which is forwarded to your local machine. Locate your local machine's corresponding port in the `PORTS` tab of VS Code.
 
-![Port Forwarding](docs/images/portforwarding.jpg)
+<img src='docs/images/portforwarding.jpg' width='100%'>
 
-Login with the credentials `admin:admin` to view the dashboard.
+Login with the credentials `admin:admin` to view the dashboard. You should see the following 3 Argo CD applications.
 
-![Argo CD Apps](docs/images/argocdapps.jpg)
+<img src='docs/images/argocdapps.jpg' width='100%'>
 
 If you encounter syncing issues, refresh the 'app-of-apps' app within the dashboard.
 
@@ -50,7 +49,7 @@ Explore the Podinfo service by visiting `podinfo.127.0.0.1.nip.io:<FORWARDED K3D
 3. Use `watch kubectl get pods -n podinfo` to watch the rolling update.
 4. Refresh the Podinfo app in the Argo CD dashboard to trigger a sync.
 
-![Podinfo Gold](image.png)
+<img src='docs/images/podinfogold.png' width='50%'>
 
 ### Exercise 4: Rollback Changes
 
@@ -64,7 +63,7 @@ Understand the GitOps workflow by inspecting the `./manifests` folder, the Argo 
 
 Take a break and enjoy the game 2048, deployed using the same GitOps principles. Visit `http://game-2048.127.0.0.1.nip.io:<FORWARDED K3D INGRESS PORT>`.
 
-![2048 Game](docs/images/2048.png)
+<img src='docs/images/2048.png' width='33%'>
 
 ### Exercise 7: Deploy Your Own Application
 
