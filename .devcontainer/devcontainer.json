@@ -1,5 +1,5 @@
 {
-    "name": "Example Kutespace",
+    "name": "Kutespace: Argo CD",
     "build": {
         "dockerfile": "Dockerfile"
     },
@@ -33,12 +33,12 @@
         },
         "codespaces": {
             "openFiles": [
-                "docs/devcontainer.md"
+                "README.md"
             ]
         }
     },
     "hostRequirements": {
-        "cpus": 4
+        "cpus": 2
     },
     "forwardPorts": [
         6443,
