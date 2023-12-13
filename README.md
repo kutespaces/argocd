@@ -1,181 +1,143 @@
+```markdown
 # Kutespace: Argo CD
 
-Spin up a fully preconfigured learning environment with Kubernetes & Argo CD. Start the first excercise now.
+Welcome to Kutespace's Argo CD repository! This guide will help you spin up a fully preconfigured learning environment with Kubernetes & Argo CD. Dive into the exercises and start your Kubernetes journey.
 
-## Setup
+## Getting Started
 
-Start a new Codespace directly from Github. Please start the Codespace in a local VSCode instance. In-browser execution is not supported yet.
+To begin, launch a new Codespace directly from GitHub. Ensure you start the Codespace in a local VSCode instance, as in-browser execution is not currently supported.
 
-<img src='docs/images/start-codespace.jpg' width='50%'>
+![Start Codespace](docs/images/start-codespace.jpg)
 
-## Tasks
+## Exercises
 
-### 1. Verify the Kubernetes Setup
+### Exercise 1: Verify the Kubernetes Setup
 
+Start by ensuring you can interact with Kubernetes:
 
-First check if you can interact with Kubernetes by requesting the nodes. A single node should be returned.
+1. Request the nodes; you should see a single node returned:
 
-```
-➜ /workspaces/argocd $ kubectl get nodes
-NAME                       STATUS   ROLES                  AGE   VERSION
-k3d-k3s-default-server-0   Ready    control-plane,master   15h   v1.27.4+k3s1
-```
-
-Next, request the pods from all namespaces. Some services are preinstalled such as Argo CD, a local git server and a traefik load balancer that allows the cluster to receive external traffic. Verify that the status is either *Completed* or *Running*.
-
-
-```
-➜ /workspaces/argocd $ kubectl get pods --all-namespaces
-NAMESPACE         NAME                                                READY   STATUS      RESTARTS        AGE
-argocd            helm-install-argocd-td8gg                           0/1     Completed   0               15h
-kube-system       helm-install-traefik-m4jft                          0/1     Completed   1               15h
-kube-system       helm-install-traefik-crd-cxchz                      0/1     Completed   0               15h
-argocd            argocd-redis-78bfdffbd-8c9qk                        1/1     Running     2 (7m55s ago)   15h
-argocd            argocd-applicationset-controller-66d5b45845-9kzt2   1/1     Running     2 (7m55s ago)   15h
-kube-system       svclb-traefik-7229c3bb-2fdxl                        2/2     Running     4 (7m55s ago)   15h
-game-2048         game-2048-7d46b7bfd4-sqr8g                          1/1     Running     2 (7m55s ago)   15h
-git-repo-server   git-repo-server-5749c9b867-cd2ln                    1/1     Running     2 (7m55s ago)   15h
-podinfo           podinfo-7df77bc677-759w5                            1/1     Running     2 (7m55s ago)   15h
-kube-system       traefik-64f55bb67d-dhskf                            1/1     Running     2 (7m55s ago)   15h
-argocd            argocd-server-6c9668f5f4-2bhgj                      1/1     Running     2 (7m56s ago)   15h
-argocd            argocd-application-controller-0                     1/1     Running     2 (7m55s ago)   15h
-argocd            argocd-repo-server-d8bfccddd-hvps7                  1/1     Running     2 (7m55s ago)   15h
-kube-system       metrics-server-648b5df564-zlpc6                     1/1     Running     2 (7m55s ago)   15h
-kube-system       coredns-77ccd57875-h4glh                            1/1     Running     2 (7m55s ago)   15h
-kube-system       local-path-provisioner-957fdf8bc-5j67d              1/1     Running     3 (7m20s ago)   15h
+```shell
+kubectl get nodes
 ```
 
-### 2. Checkout the Argo CD Dashboard
+2. Check the pods across all namespaces. Look for services like Argo CD, a local git server, and a Traefik load balancer:
 
-Next, open your browser and navigate to the Argo CD dashboard at `http://argocd.127.0.0.1.nip.io:<FORWARDED K3D INGRESS PORT>`. Inside this codespace, the load balancer for our Kubernetes cluster listens to traffic on port 8080. This port is automatically forwarded to your local machine. You can find the corresponding port of you local machine in the `PORTS` section of VS Code. In the picture below we would use port 64578.
-
-![](docs/images/portforwarding.jpg)
-
-You should see the Argo CD Dashboard login page. Login using the user password combination `admin:admin`.
-
-You should see the following screen:
-![](docs/images/argocdapps.jpg)
-
-In case of syncing issues, try to refresh the app-of-apps app.
-
-### Checkout Podinfo Service
-We already deployed 2 services to your cluster game-2048 and podinfo. Check out podinfo first by navigating to podinfo.127.0.0.1.nip.io:<FORWARDED K3D INGRESS PORT>.
-
-Next, we want to try out the GitOps workflow. The folder `./manifests` contains a git repository that is connected to a git server in your Kubernetes cluster. More details about that connection follow later.
-
-0. Notice that the podinfo app in your browser has a jade green background.
-1. Check out `manifests/podinfo/resources/deployment.yaml`
-2. Modify the env variable `PODINFO_UI_COLOR` and change the color. The hex code for gold is #FFD700.
-3. add, commit and push your changes. Make sure you are located inside the nested git repository `./manifests` when you perform these steps.
-4. Execute `watch kubectl get pods -n podinfo` to see how a rolling update is performed by starting a new pod and then terminating the old pod.
-5. Wait for up to 3 minutes or refresh the app podinfo inside the Argo CD dashboard in your browser to trigger the Argo CD sync of the changes into your cluster.
-6. Notice how the background of the podinfo app turned gold: ![](image.png)
-
-### Rollback Changes
-
-One of main benefits of the GitOps approach is that our cluster mirrors whats in our git repository. So let's assume we don't like the golden background for podinfo. Let's revert it:
-
-1. Execute `git log` and copy the last commit hash.
-2. Execute `git revert <COMMIT HASH> && git push`.
-3. Refresh the podinfo argo cd app in the dashboard again to speed up the process.
-4. Wait until the old pod is replaced and traffic is redirected to the newly spawned pod.
-5. Watch how podinfo shines in jade again.
-
-### GitOps End2End Workflow
-
-In the previous task, we updated a kubernetes resource yaml file, pushed the change to our git server and it got applied automatically. Let's dive deeper into how that works exactly.
-
-**Git Server**
-
-`./manifests/git-repo-server` contains manifests that we used to spin up a git server in the Kubernetes cluster.
-
-**Argo CD**
-
-`./manifests/argocd` contains manifests that we used to spin up Argo CD in the Kubernetes cluster. The file `repo.yaml` looks as follows:
-
-```
-apiVersion: v1
-kind: Secret
-metadata:
-  name: git-repo
-  labels:
-    argocd.argoproj.io/secret-type: repository
-stringData:
-  name: local-repo
-  project: default
-  type: git
-  url: http://git-repo-server.git-repo-server.svc.cluster.local:/git/manifests
-  insecure: 'true'
+```shell
+kubectl get pods --all-namespaces
 ```
 
-It accesses the git server via it's Kubernetes internal DNS name. Specificially it links to the git repository called `manifests`. This manifests tells Argo CD how to access the manifests repository. I.e. if the repository would be accessed via SSH, the yaml would contain an SSH key.
+Ensure the pod statuses are 'Completed' or 'Running'.
 
-**Argo CD Application**
+### Exercise 2: Access the Argo CD Dashboard
 
-Argo CD applications are a custom resource that refers to a folder at a specific revision/branch in your git repository. It basically tells Argo CD what it should deploy.
+Access the Argo CD dashboard through your browser. The URL format is `http://argocd.127.0.0.1.nip.io:<FORWARDED K3D INGRESS PORT>`. The load balancer listens on port 8080, which is forwarded to your local machine. Locate your local machine's corresponding port in the `PORTS` tab of VS Code.
 
-When spinning up the cluster, we deployed the Argo CD application `./manifests/app-of-apps.yaml`.
+![Port Forwarding](docs/images/portforwarding.jpg)
+
+Login with the credentials `admin:admin` to view the dashboard.
+
+![Argo CD Apps](docs/images/argocdapps.jpg)
+
+If you encounter syncing issues, refresh the 'app-of-apps' app within the dashboard.
+
+### Exercise 3: Explore Podinfo Service
+
+Explore the Podinfo service by visiting `podinfo.127.0.0.1.nip.io:<FORWARDED K3D INGRESS PORT>`. Follow these steps to modify the Podinfo UI color and observe the GitOps workflow in action:
+
+1. Change the `PODINFO_UI_COLOR` in `manifests/podinfo/resources/deployment.yaml`.
+2. Commit and push your changes.
+3. Use `watch kubectl get pods -n podinfo` to watch the rolling update.
+4. Refresh the Podinfo app in the Argo CD dashboard to trigger a sync.
+
+![Podinfo Gold](image.png)
+
+### Exercise 4: Rollback Changes
+
+To revert changes, use Git to revert the commit and push the changes. Refresh the Podinfo app in the Argo CD dashboard and observe the UI color return to jade green.
+
+### Exercise 5: GitOps End-to-End Workflow
+
+Understand the GitOps workflow by inspecting the `./manifests` folder, the Argo CD setup in `./manifests/argocd`, and the 'app-of-apps' pattern in `./manifests/argocd-apps`. Take time to understand the file structure and the role of each component.
+
+### Exercise 6: Play Game 2048
+
+Take a break and enjoy the game 2048, deployed using the same GitOps principles. Visit `http://game-2048.127.0.0.1.nip.io:<FORWARDED K3D INGRESS PORT>`.
+
+![2048 Game](docs/images/2048.png)
+
+### Exercise 7: Deploy Your Own Application
+
+Now it's time to deploy an application of your choice. Use the manifests for Podinfo (`./manifests/podinfo`) and Game 2048 (`./manifests/game-2048`) as a starting point to create your own.
+
+1. Select an application to deploy, such as [Kanboard](https://docs.kanboard.org/v1/admin/docker/), and prepare its Docker deployment configuration.
+
+2. Copy the structure of the `podinfo` or `game-2048` manifest directories and update the Kubernetes manifests for your application.
+
+3. Create a new Argo CD application manifest in `./manifests/argocd-apps`, modeled after the existing examples.
+
+4. Instead of applying your application manifest directly, add it to the `./manifests/app-of-apps.yaml` to let Argo CD manage the deployment as part of its automated process.
+
+5. Commit and push your changes to the repository, then watch Argo CD automatically deploy your application through the 'app-of-apps' approach.
+
+Remember, your application will be accessible via `http://<your-app-name>.127.0.0.1.nip.io:<FORWARDED K3D INGRESS PORT>`. Use the default credentials `admin:admin` if deploying Kanboard.
+
+
+### Exercise 8: Real-World Multi-Stage Deployment
+
+This exercise demonstrates a practical approach to deploying applications for different environments using Argo CD. We'll deploy two variants of the Podinfo application, one for a staging environment and another for production, each with different configurations.
+
+#### Understanding the Folder Structure
+
+The folder `./manifests/multi-stage-example` is structured as follows:
 
 ```
-# app-of-apps.yaml
-...
-source:
-  path: argocd-apps
-  repoURL: http://git-repo-server.git-repo-server.svc.cluster.local:/git/manifests
-  targetRevision: main
-...
+├── app-of-apps.yaml
+├── argocd-apps
+│   ├── kustomization.yaml
+│   ├── podinfo-staging.yaml
+│   └── podinfo-production.yaml
+└── podinfo
+    ├── base
+    ├── production
+    └── staging
 ```
 
-It links to the folder `./manifests/argocd-apps`, which contains even more apps. We call that pattern app of apps. It enables us to deploy a single app which in return deploys our other apps which in return deploy resources.
+- `app-of-apps.yaml`: This is the root application that Argo CD uses to deploy other applications in a cascading fashion.
+- `argocd-apps`: Contains individual Argo CD application manifests for different environments (staging and production).
+- `podinfo`: Houses the shared base manifests and overlays for specific environments.
 
-`./manifests/argocd-apps` defines an Argo CD application in `podinfo.yaml`.
+#### Deploying Staging and Production Variants
 
+The `podinfo-staging.yaml` and `podinfo-production.yaml` files define the Argo CD applications for staging and production. These applications are configured to apply environment-specific patches, such as different hostnames or UI colors, to the base `podinfo` manifests.
+
+Follow these steps to deploy both environments:
+
+1. Apply the 'app-of-apps' manifest:
+
+```shell
+kubectl apply -f ./manifests/multi-stage-example/app-of-apps.yaml
 ```
-source:
-  path: podinfo
-  repoURL: http://git-repo-server.git-repo-server.svc.cluster.local:/git/manifests
-  targetRevision: main
-```
 
-The argo cd application instructs Argo CD to look into the folder ./manifests/podinfo. `./manifests/podinfo` contains the manifests for our podinfo application.
+2. This will create the staging and production Argo CD applications, which will then deploy the Podinfo app for each environment:
 
-Take your time to check to inspect the files and try to retrace each step.
+- Staging: `http://podinfo-staging.127.0.0.1.nip.io:<FORWARDED K3D INGRESS PORT>`
+- Production: `http://podinfo-production.127.0.0.1.nip.io:<FORWARDED K3D INGRESS PORT>`
 
-### Check out game 2048
+3. Verify that the applications are deployed correctly in Argo CD and accessible via their respective URLs.
 
-That was a lot. Let's take a quick break and check out `http://game-2048.127.0.0.1.nip.io:<FORWARDED K3D INGRESS PORT>`. You should see the game 2048, which was deployed in the same manner as podinfo. The manifests reside in `./manifests/game-2048`
+#### Customizing the Deployment
 
-<img src='docs/images/2048.png' width='50%'>
+To alter the application for different environments, you can modify the `kustomization.yaml` and corresponding patches within the `staging` and `production` folders. For instance, the production variant changes the UI color to aqua blue:
 
-### Deploy own application
+- Inspect the `production/deployment-patch.yaml` to see the environment variable patch.
+- Review the `production/kustomization.yaml` to understand how Kustomize applies the patch.
 
-Finally
-deploy this simple kanban board on your own. Check it out in the browser afterwards.
-https://docs.kanboard.org/v1/admin/docker/
-default user password is admin:admin
-
-don't forget to add the argocd application manifest to the app-of-apps.
-this will make the app of apps sync it too
-
-### Present repo structure for real world projects
-
-```
-├── app-configs
-│   ├── Production
-│   ├── Staging
-│   └── README.md
-└── manifests
-    ├── README.md
-    └── application-name
-        ├── base
-        ├── production
-        └── staging
-```
+By using this folder structure and Kustomize overlays, you can manage multiple environments efficiently, reusing base manifests while allowing for environment-specific customizations.
 
 ## Troubleshooting
 
-You are facing issues? Let us know to help the next person facing the same issue.
+Encountering issues? Let us know to assist you and others who may face similar challenges.
 
 ### DNS Resolution
-
-argocd.127.0.0.1 dns can not be resolved. Some dns servers don't resolve DNS entries that point to localhost or 127.0.0.1. Change to something like 8.8.8.8 (google) or 1.1.1.1 (cloudflare)
+If `argocd.127.0.0.1.nip.io` cannot be resolved, switch your DNS to a public DNS provider like Google (8.8.8.8) or Cloudflare (1.1.1.1). Apparently, some DNS servers don't resolve DNS entries that point to localhost.
