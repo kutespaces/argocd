@@ -5,71 +5,81 @@
 
 # Kutespace: Argo CD
 
-Spin up a fully configured learning environment for Argo CD in seconds.
-
-## Into
-- what is this thing? kutespaces?
-- what is argo cd?
-- read about all components in section components
-- or directly jump into the tasks
+Spin up a fully preconfigured learning environment with Kubernetes & Argo CD. Start the first excercise now.
 
 ## Setup
 
-Start a new Codespace directly from Github. Please start the Codespace in a local VSCode. In-browser execution is not supported yet.
+Start a new Codespace directly from Github. Please start the Codespace in a local VSCode instance. In-browser execution is not supported yet.
 
-![Start Codespace](docs/images/start-codespace.jpg)
-
-
-## Components
-
-### Devcontainer / Codespaces
-
-GitHub Codespaces is an online development environment that lets you code inside a remote VM with no setup needed. Devcontainers are a part of this service, providing pre-configured coding environments in containers. With devcontainers, you can set up everything a developer needs, like tools and extensions, so anyone can start coding immediately, ensuring consistency across all team members' workspaces.
-
-### k3d
-k3d fully functional kubernetes cluster
-k3d ships with traefik loadbalancer by default
-traffic from this dev container port 8080 is forwarded to port 80 of the cluster
-we configure the traefik load balancer by creating kubernetes ingress resources.
-e.g. we configure one ingress argocd.127.0.0.1.nip.io that maps to the argocd kubernetes service.
-we use nip.io to get different dns domain names that all map to localhost. However, given different host names the load balancer traefik redirects to different kubernetes services.
-
-### Argo CD
-
-Argo CD automates the deployment and lifecycle management of your applications in Kubernetes by syncing them with configurations stored in a Git repository. When you make changes to your application's configuration and push them to the Git repository, Argo CD detects these changes and applies them to your Kubernetes cluster, ensuring that your live applications always match what's specified in your repository.
-
-This approach has several benefits:
-
-Version Control: Since your configurations are stored in Git, you have a complete history of changes, and you can roll back to previous versions if needed.
-Consistency: By using the same configurations from development to production, you avoid discrepancies between environments.
-Automation: Manual deployment steps are reduced, which minimizes the risk of human error and saves time.
-Self-healing: If something changes in your live environment that doesn't match the repository, Argo CD can automatically correct it.
-
-More Information: https://argo-cd.readthedocs.io/en/stable/
+<img src='docs/images/start-codespace.jpg' width='50%'>
 
 ## Tasks
 
-### Checkout ArgoCD Dashboard
-- argocd.127.0.0.1.nip.io:<FORWARDED K3D INGRESS PORT>
-- check out the port mappings to see how to access port 8080 of this space with you browser.
-- log in with admin:admin
+### 1. Verify the Kubernetes Setup
 
-![Image](docs/images/portforwarding.jpg)
 
-### Checkout App of Apps Pattern
-- checkout app of apps
-manifests/app-of-apps.yaml
+First check if you can interact with Kubernetes by requesting the nodes. A single node should be returned.
+
+```
+➜ /workspaces/argocd $ kubectl get nodes
+NAME                       STATUS   ROLES                  AGE   VERSION
+k3d-k3s-default-server-0   Ready    control-plane,master   15h   v1.27.4+k3s1
+```
+
+Next, request the pods from all namespaces. Some services are preinstalled such as Argo CD, a local git server and a traefik load balancer that allows the cluster to receive external traffic. Verify that the status is either *Completed* or *Running*.
+
+
+```
+➜ /workspaces/argocd $ kubectl get pods --all-namespaces
+NAMESPACE         NAME                                                READY   STATUS      RESTARTS        AGE
+argocd            helm-install-argocd-td8gg                           0/1     Completed   0               15h
+kube-system       helm-install-traefik-m4jft                          0/1     Completed   1               15h
+kube-system       helm-install-traefik-crd-cxchz                      0/1     Completed   0               15h
+argocd            argocd-redis-78bfdffbd-8c9qk                        1/1     Running     2 (7m55s ago)   15h
+argocd            argocd-applicationset-controller-66d5b45845-9kzt2   1/1     Running     2 (7m55s ago)   15h
+kube-system       svclb-traefik-7229c3bb-2fdxl                        2/2     Running     4 (7m55s ago)   15h
+game-2048         game-2048-7d46b7bfd4-sqr8g                          1/1     Running     2 (7m55s ago)   15h
+git-repo-server   git-repo-server-5749c9b867-cd2ln                    1/1     Running     2 (7m55s ago)   15h
+podinfo           podinfo-7df77bc677-759w5                            1/1     Running     2 (7m55s ago)   15h
+kube-system       traefik-64f55bb67d-dhskf                            1/1     Running     2 (7m55s ago)   15h
+argocd            argocd-server-6c9668f5f4-2bhgj                      1/1     Running     2 (7m56s ago)   15h
+argocd            argocd-application-controller-0                     1/1     Running     2 (7m55s ago)   15h
+argocd            argocd-repo-server-d8bfccddd-hvps7                  1/1     Running     2 (7m55s ago)   15h
+kube-system       metrics-server-648b5df564-zlpc6                     1/1     Running     2 (7m55s ago)   15h
+kube-system       coredns-77ccd57875-h4glh                            1/1     Running     2 (7m55s ago)   15h
+kube-system       local-path-provisioner-957fdf8bc-5j67d              1/1     Running     3 (7m20s ago)   15h
+```
+
+### 2. Checkout the Argo CD Dashboard
+
+Next, open your browser and navigate to the Argo CD dashboard at `http://argocd.127.0.0.1.nip.io:<FORWARDED K3D INGRESS PORT>`. Inside this codespace, the load balancer for our Kubernetes cluster listens to traffic on port 8080. This port is automatically forwarded to your local machine. You can find the corresponding port of you local machine in the `PORTS` section of VS Code. In the picture below we would use port 64578.
+
+![](docs/images/portforwarding.jpg)
+
+You should see the Argo CD Dashboard login page. Login using the user password combination `admin:admin`.
+
+You should see the following screen:
+![](docs/images/argocdapps.jpg)
+
+In case of syncing issues, try to refresh the app-of-apps app.
 
 ### Checkout Podinfo Service
-- checkout podinfo
-    - modify env variable and view that it syncs
-    - podinfo.127.0.0.1.nip.io:<FORWARDED K3D INGRESS PORT>
-    - manifests/podinfo
+We already deployed 2 services to your cluster game-2048 and podinfo. Check out podinfo first by navigating to podinfo.127.0.0.1.nip.io:<FORWARDED K3D INGRESS PORT>.
 
-- increase replicas to 2
-- check that 2 replicas exist via cli and via kubernetes dashboard
+Next, we want to try out the GitOps workflow. The folder `./manifests` contains a git repository that is connected to a git server in your Kubernetes cluster. More details about that connection follow later.
 
-- don't forget to refresh in the argocd ui o.w. you may need to wait up to 3 minutes for changes to take place.
+1. Check out `manifests/podinfo/resources/deployment.yaml`
+2. Modify the env variable `PODINFO_UI_COLOR` and change the color. The hex code for gold is #FFD700.
+3. add, commit and push your changes. Make sure you are located inside the nested git repository `./manifests` when you perform these steps.
+4. Wait for up to 3 minutes or refresh the app podinfo inside the Argo CD dashboard.
+
+### GitOps End2End Workflow
+The repository is linked to Argo CD already. I.e. any changes you push to the local git server will be synced to your cluster automatically.
+
+
+The app of apps pattern is a common pattern to
+- checkout app of apps
+manifests/app-of-apps.yaml
 
 ### Check out game 2048
 - checkout game-2048
