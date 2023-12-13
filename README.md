@@ -68,10 +68,15 @@ We already deployed 2 services to your cluster game-2048 and podinfo. Check out 
 
 Next, we want to try out the GitOps workflow. The folder `./manifests` contains a git repository that is connected to a git server in your Kubernetes cluster. More details about that connection follow later.
 
+0. Notice that the podinfo app in your browser has a jade green background.
 1. Check out `manifests/podinfo/resources/deployment.yaml`
 2. Modify the env variable `PODINFO_UI_COLOR` and change the color. The hex code for gold is #FFD700.
 3. add, commit and push your changes. Make sure you are located inside the nested git repository `./manifests` when you perform these steps.
-4. Wait for up to 3 minutes or refresh the app podinfo inside the Argo CD dashboard.
+4. Execute `watch kubectl get pods -n podinfo` to see how a rolling update is performed by starting a new pod and then terminating the old pod.
+5. Wait for up to 3 minutes or refresh the app podinfo inside the Argo CD dashboard in your browser to trigger the Argo CD sync of the changes into your cluster.
+6. Notice how the background of the podinfo app turned yellow: ![](image.png)
+
+7. (Optional) Try out to change the displayed message by setting the env variable: PODINFO_UI_MESSAGE.
 
 ### GitOps End2End Workflow
 The repository is linked to Argo CD already. I.e. any changes you push to the local git server will be synced to your cluster automatically.
