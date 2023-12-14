@@ -1,8 +1,8 @@
 # Kutespace: Argo CD
 
-Welcome to Kutespace's Argo CD repository! This guide will help you spin up a fully preconfigured learning environment with Kubernetes & Argo CD. Dive into the exercises and start your Kubernetes journey.
+Welcome to Kutespace's Argo CD repository! This guide will help you spin up a fully preconfigured learning environment with Kubernetes & Argo CD.
 
-## Introduction and Learning Outcomes
+## Learning Outcomes
 
 Welcome to this hands-on journey with Kubernetes and Argo CD! As you embark on these exercises, you're set to learn key practices in modern application deployment and management. Here's what you'll achieve by the end of this guide:
 
