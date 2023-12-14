@@ -50,6 +50,7 @@ main() {
   # Change to the repository directory
   pushd "./manifests" > /dev/null
 
+  git config --global init.defaultBranch main
   # Initialize the repository if it's not already initialized and add the remote
   if [ ! -d ".git" ]; then
       git init
