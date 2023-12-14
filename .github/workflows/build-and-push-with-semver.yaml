@@ -32,6 +32,5 @@ jobs:
           imageName: ${{ env.IMAGE_NAME }}
           imageTag: devcontainer
           subFolder: .devcontainer/build
-          cache-from: type=registry,ref=${{ env.IMAGE_NAME }}:devcontainer
-          cache-to: type=registry,ref=${{ env.IMAGE_NAME }}:devcontainer,mode=max
+          cache-from: ${{ env.IMAGE_NAME }}:devcontainer
           push: always
