@@ -16,9 +16,14 @@ By the end of these exercises, you'll have a solid foundation in deploying and m
 
 ## Getting Started
 
-To begin, launch a new Codespace directly from GitHub. Ensure you start the Codespace in a local VSCode instance, as in-browser execution is not currently supported.
+To begin, launch a new Codespace directly from GitHub. 
 
 <img src='docs/images/start-codespace.jpg' width='50%'>
+
+Once you started the Codespace it will open in a new browser window. Close that browser window and start the Codespace in VSCode instead.
+Codespaces in the browser are not supported yet.
+
+<img src='docs/images/openinvscode.jpg' width='50%'>
 
 ## Exercises
 
