@@ -81,7 +81,7 @@ main() {
     ELAPSED_TIME=$((ELAPSED_TIME+5))
   done
   echo "Waiting for argocd repo server to be ready"
-  kubectl wait --namespace argocd --for=condition=Ready pod -l app.kubernetes.io/component=repo-server,app.kubernetes.io/instance=argocd --timeout=30s
+  kubectl wait --namespace argocd --for=condition=Ready pod -l app.kubernetes.io/component=repo-server,app.kubernetes.io/instance=argocd --timeout=60s
   echo "Argocd repo server is ready"
   kubectl apply -f manifests/app-of-apps/argocd-app.yaml
 
