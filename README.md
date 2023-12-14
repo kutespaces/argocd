@@ -55,7 +55,9 @@ Login with the credentials `admin:admin` to view the dashboard. You should see t
 
 <img src='docs/images/argocdapps.jpg' width='100%'>
 
-If you encounter syncing issues, refresh the 'app-of-apps' app within the dashboard.
+If your Argo CD didn't connect to Github yet press refresh' on the 'app-of-apps' app within the dashboard.
+
+<img src='docs/images/argoappofappssyncissues.png' width='30%'>
 
 ### Exercise 3: Explore Podinfo Service
 
