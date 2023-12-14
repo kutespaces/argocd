@@ -55,10 +55,6 @@ Login with the credentials `admin:admin` to view the dashboard. You should see t
 
 <img src='docs/images/argocdapps.jpg' width='100%'>
 
-If your Argo CD didn't connect to Github yet press refresh' on the 'app-of-apps' app within the dashboard.
-
-<img src='docs/images/argoappofappssyncissues.png' width='30%'>
-
 ### Exercise 3: Explore Podinfo Service
 
 Explore the Podinfo service by visiting `podinfo.127.0.0.1.nip.io:<FORWARDED K3D INGRESS PORT>`. Follow these steps to modify the Podinfo UI color and observe the GitOps workflow in action:
@@ -162,4 +158,10 @@ Congratulations on completing the exercises! You've successfully navigated throu
 Encountering issues? Let us know to assist you and others who may face similar challenges.
 
 ### DNS Resolution
-If `argocd.127.0.0.1.nip.io` cannot be resolved, switch your DNS to a public DNS provider like Google (8.8.8.8) or Cloudflare (1.1.1.1). Apparently, some DNS servers don't resolve DNS entries that point to localhost.
+If `argocd.127.0.0.1.nip.io` cannot be resolved, switch your DNS to a public DNS service like Google (8.8.8.8) or Cloudflare (1.1.1.1).
+Some routers block DNS entries that resolve to localhost (127.0.0.1 or ::1). This is called "DNS Rebinding Protection".
+
+### Argo CD Shows Only App of Apps
+If your Argo CD looks like this and didn't connect to Github yet press refresh' on the 'app-of-apps' app within the dashboard.
+
+<img src='docs/images/argoappofappssyncissues.png' width='40%'>
