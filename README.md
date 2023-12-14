@@ -16,7 +16,7 @@ By the end of these exercises, you'll have a solid foundation in deploying and m
 
 ## Getting Started
 
-To begin, launch a new Codespace directly from GitHub. 
+To begin, launch a new Codespace directly from GitHub.
 
 <img src='docs/images/start-codespace.jpg' width='50%'>
 
@@ -47,7 +47,7 @@ Ensure the pod statuses are 'Completed' or 'Running'.
 
 ### Exercise 2: Access the Argo CD Dashboard
 
-Access the Argo CD dashboard through your browser. The URL format is `http://argocd.127.0.0.1.nip.io:<FORWARDED K3D INGRESS PORT>`. The load balancer listens on port 8080, which is forwarded to your local machine. Locate your local machine's corresponding port in the `PORTS` tab of VS Code.
+Access the Argo CD dashboard through your browser. The URL format is `http://argocd.127.0.0.1.nip.io:<FORWARDED K3D INGRESS PORT>`. The load balancer listens on port 8080, which is forwarded to your local machine. Locate your local machine's corresponding port by opening your VS Code terminal and switching to the `PORTS` tab.
 
 <img src='docs/images/portforwarding.jpg' width='100%'>
 
