@@ -58,8 +58,6 @@ main() {
   fi
 
   git add -A
-
-  # prebuilt randomly failed when not using -c user.name and -c user.email 
   git diff --staged --quiet || git -c user.name="Kutespaces" -c user.email="admin@kutespaces.net" commit -m "Initial commit."
 
   # Wait for the Git server to be ready with a timeout
