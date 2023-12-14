@@ -1,8 +1,6 @@
 {
     "name": "Kutespace: Argo CD",
-    "build": {
-        "dockerfile": "Dockerfile"
-    },
+    "image": "ghcr.io/kutespaces/argocd:devcontainer",
     "runArgs": [
         "--init",
         "--privileged"
