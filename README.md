@@ -4,7 +4,7 @@ Welcome to Kutespace's Argo CD repository! This guide will help you spin up a fu
 
 ## Learning Outcomes
 
-Welcome to this hands-on journey with Kubernetes and Argo CD! As you embark on these exercises, you're set to learn key practices in modern application deployment and management. Here's what you'll achieve by the end of this guide:
+As you embark on these exercises, you're set to learn key practices in modern application deployment and management. Here's what you'll achieve by the end of this guide:
 
 - **Implementing GitOps Workflow**: You'll use Git as the source of truth for your infrastructure, applying changes that automatically trigger deployments.
 - **Using Argo CD Dashboard**: You'll learn to navigate the Argo CD dashboard, monitoring the status and health of your applications.
