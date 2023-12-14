@@ -52,31 +52,4 @@
     },
     "waitFor": "postCreateCommand",
     "onCreateCommand": "/bin/bash -c .devcontainer/on-create.sh",
-    "features": {
-        "ghcr.io/devcontainers/features/common-utils:2": {
-            "configureZshAsDefaultShell": true,
-            "username": "vscode",
-            "userUid": 1000,
-            "userGid": 1000
-        },
-        "ghcr.io/devcontainers/features/docker-in-docker:2": {},
-        "ghcr.io/kutespaces/devcontainers-features/k3d:1": {
-            "version": "v5.6.0"
-        },
-        "ghcr.io/devcontainers-contrib/features/kubectl-asdf:2": {
-            "version": "1.25.9"
-        },
-        "ghcr.io/kutespaces/devcontainers-features/kubectx-kubens:1": {},
-        "ghcr.io/devcontainers-contrib/features/argo-cd:1": {},
-        "ghcr.io/devcontainers-contrib/features/pre-commit:2": {},
-    },
-    "overrideFeatureInstallOrder": [
-        "ghcr.io/devcontainers/features/common-utils",
-        "ghcr.io/devcontainers/features/docker-in-docker",
-        "ghcr.io/kutespaces/devcontainers-features/k3d",
-        "ghcr.io/devcontainers-contrib/features/kubectl-asdf",
-        "ghcr.io/kutespaces/devcontainers-features/kubectx-kubens",
-        "ghcr.io/devcontainers-contrib/features/argo-cd",
-        "ghcr.io/devcontainers-contrib/features/pre-commit",
-    ]
 }
