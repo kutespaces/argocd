@@ -1,6 +1,14 @@
-# Kutespace: Argo CD
+# Kutespace: GitOps with Argo CD
 
-Welcome to Kutespace's Argo CD repository! This guide will help you spin up a fully preconfigured learning environment with Kubernetes & Argo CD.
+Welcome to Kutespace's GitOps with Argo CD repository! This guide will help you spin up a fully preconfigured learning environment with Kubernetes & Argo CD.
+
+## What is GitOps & Argo CD?
+
+Argo CD is a declarative, GitOps continuous delivery tool for Kubernetes. You can think of it as a tool that ensures the state of your Kubernetes cluster matches the configurations defined in a Git repository.
+
+More information:
+- [GitOps](https://about.gitlab.com/topics/gitops/)
+- [Argo CD](https://argo-cd.readthedocs.io/en/stable/)
 
 ## Learning Outcomes
 
@@ -51,28 +59,109 @@ Access the Argo CD dashboard through your browser. The URL format is `http://arg
 
 <img src='docs/images/portforwarding.jpg' width='100%'>
 
-Login with the credentials `admin:admin` to view the dashboard. You should see the following 3 Argo CD applications. If just one app is shown or the status of one of the apps is not `synced`, please press refresh on the corresponding app.
+Login with the credentials `admin:admin` to view the dashboard. You should see the following 3 Argo CD applications.
 
 <img src='docs/images/argocdapps.jpg' width='100%'>
 
+**Troubleshooting:**
+1. If just one app is shown or the status of one of the apps is not `synced`, please press refresh on the corresponding app.
+2. If you cannot even open the dashboard and your browser shows an error like: `DNS_PROBE_FINISHED_NXDOMAIN` please continue [here](#dns-resolution) .
+
+
+
 ### Exercise 3: Explore Podinfo Service
 
-Explore the Podinfo service by visiting `podinfo.127.0.0.1.nip.io:<FORWARDED K3D INGRESS PORT>`. Follow these steps to modify the Podinfo UI color and observe the GitOps workflow in action:
+Your Kubernetes cluster is now home to two services: the classic game-2048 and the informative podinfo. Why not start by taking a look at the podinfo service? Simply head to `http://podinfo.127.0.0.1.nip.io:<FORWARDED K3D INGRESS PORT>` in your web browser.
 
-1. Change the `PODINFO_UI_COLOR` in `manifests/podinfo/resources/deployment.yaml`.
-2. Commit and push your changes.
-3. Use `watch kubectl get pods -n podinfo` to watch the rolling update.
-4. Refresh the Podinfo app in the Argo CD dashboard to trigger a sync.
+As we delve into the GitOps workflow, you'll find that the ./manifests directory houses a git repository tethered to an internal git server within your cluster. We'll elaborate on this connection shortly.
+
+Here's a hands-on exercise to illustrate the power of GitOps:
+
+1. Open the podinfo app and observe its default jade green background.
+2. Dive into the manifests/podinfo/resources/deployment.yaml file to see its configuration. Locate the PODINFO_UI_COLOR environment variable and update its value to the golden hue of #FFD700.
+3. add, commit, and push your changes to the git server. Remember to execute these git operations within the ./manifests directory. This is a nested git repository.
+4. Run watch kubectl get pods -n podinfo to witness a rolling update in action. You'll see Kubernetes orchestrating a seamless transition by spinning up a new pod before retiring the old one.
+5. Give it up to three minutes or refresh the podinfo application in the Argo CD dashboard.
+6. Revel in your success as the podinfo app's background transforms to a brilliant gold. Here's a sneak peek of what to expect:
+
 
 <img src='docs/images/podinfogold.png' width='50%'>
 
-### Exercise 4: Rollback Changes
+### Exercise 4: Reverting to a Previous State
 
-To revert changes, use Git to revert the commit and push the changes. Refresh the Podinfo app in the Argo CD dashboard and observe the UI color return to jade green.
+The beauty of GitOps lies in its ability to seamlessly reflect your git repository's state onto your cluster. Should you decide that the golden glimmer of podinfo doesn't quite suit your taste, reverting is a breeze:
 
-### Exercise 5: GitOps End-to-End Workflow
+1. Whip open your terminal and run `git log` to retrieve the hash of the commit you wish to undo.
+2. Swiftly revert the change with `git revert <COMMIT HASH>` followed by `git push` to update the repository.
+3. Nudge the process along by refreshing the podinfo application within the Argo CD dashboard.
+4. Keep an eye on the transition by running `watch kubectl get pods -n podinfo`. This command lets you observe in real-time as Kubernetes orchestrates the replacement of the pod.
+5. Be greeted once more by the familiar, soothing jade green background of podinfo as the changes take hold.
 
-Understand the GitOps workflow by inspecting the `./manifests` folder, the Argo CD setup in `./manifests/argocd`, and the 'app-of-apps' pattern in `./manifests/argocd-apps`. Take time to understand the file structure and the role of each component.
+### Exercise 5: Unterstand GitOps End-to-End
+
+This section explains the GitOps workflow we've used to update a Kubernetes resource YAML file, push the change to our git server, and have it automatically applied. Take your time to understand the file structure and the interaction of the components.
+
+#### Git Server Setup
+
+Under `./manifests/git-repo-server`, you'll find manifests that set up a git server within the Kubernetes cluster. This internal server hosts our repositories and allows Argo CD to pull changes.
+
+#### Argo CD Configuration
+
+The directory `./manifests/argocd` includes manifests for deploying Argo CD. The `repo.yaml` file configures Argo CD to access the git server using the Kubernetes internal DNS name, targeting the `manifests` repository:
+
+```yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: git-repo
+  labels:
+    argocd.argoproj.io/secret-type: repository
+stringData:
+  name: local-repo
+  project: default
+  type: git
+  url: http://git-repo-server.git-repo-server.svc.cluster.local:/git/manifests
+  insecure: 'true'
+```
+
+This secret is crucial for connecting Argo CD to the git server. If SSH were used instead, this YAML would include the necessary SSH key.
+
+#### Argo CD Applications
+
+An Argo CD application is a custom resource that points to a specific folder and revision or branch in a git repository, dictating what Argo CD should deploy.
+
+For example, the `app-of-apps.yaml` deployed during cluster setup is:
+
+```yaml
+# app-of-apps.yaml
+...
+source:
+  path: argocd-apps
+  repoURL: http://git-repo-server.git-repo-server.svc.cluster.local:/git/manifests
+  targetRevision: main
+...
+```
+
+This application points to the `./manifests/argocd-apps` directory containing additional application definitions. This "app of apps" pattern allows the deployment of a single application that, in turn, deploys other applications, which then deploy resources.
+
+Within `./manifests/argocd-apps`, the `podinfo.yaml` file defines an application for the podinfo service:
+
+```yaml
+source:
+  path: podinfo
+  repoURL: http://git-repo-server.git-repo-server.svc.cluster.local:/git/manifests
+  targetRevision: main
+```
+
+The above tells Argo CD to apply the manifests located in `./manifests/podinfo`, which contain the configurations for the podinfo application.
+
+Take the time to inspect these files and understand each step of the GitOps workflow.
+
+#### Applying Changes
+
+When you push changes to the `manifests` repository, Argo CD detects the updates and automatically applies them to the cluster. This process ensures that the cluster's state always matches the desired state as defined in the git repository.
+
+Please ensure you understand the connection between the git repository, Argo CD, and the Kubernetes resources to fully grasp the GitOps workflow.
 
 ### Exercise 6: Play Game 2048
 
@@ -90,7 +179,7 @@ Now it's time to deploy an application of your choice. Use the manifests for Pod
 
 3. Create a new Argo CD application manifest in `./manifests/argocd-apps`, modeled after the existing examples.
 
-4. Instead of applying your application manifest directly, add it to the `./manifests/app-of-apps.yaml` to let Argo CD manage the deployment as part of its automated process.
+4. Instead of applying your application manifest directly, add it to `manifests/argocd-apps/kustomization.yaml` which is deployed via the Argo CD application `manifests/app-of-apps.yaml`.
 
 5. Commit and push your changes to the repository, then watch Argo CD automatically deploy your application through the 'app-of-apps' approach.
 
@@ -144,8 +233,8 @@ kubectl apply -f ./manifests/multi-stage-example/app-of-apps.yaml
 
 To alter the application for different environments, you can modify the `kustomization.yaml` and corresponding patches within the `staging` and `production` folders. For instance, the production variant changes the UI color to aqua blue:
 
-- Inspect the `production/deployment-patch.yaml` to see the environment variable patch.
-- Review the `production/kustomization.yaml` to understand how Kustomize applies the patch.
+- Inspect the `manifests/multi-stage-example/production/deployment-patch.yaml` to see the environment variable patch.
+- Review the `manifests/multi-stage-example/production/kustomization.yaml` to understand how Kustomize applies the patch.
 
 By using this folder structure and Kustomize overlays, you can manage multiple environments efficiently, reusing base manifests while allowing for environment-specific customizations.
 
