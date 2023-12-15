@@ -51,7 +51,7 @@ Access the Argo CD dashboard through your browser. The URL format is `http://arg
 
 <img src='docs/images/portforwarding.jpg' width='100%'>
 
-Login with the credentials `admin:admin` to view the dashboard. You should see the following 3 Argo CD applications.
+Login with the credentials `admin:admin` to view the dashboard. You should see the following 3 Argo CD applications. If just one app is shown or the status of one of the apps is not `synced`, please press refresh on the corresponding app.
 
 <img src='docs/images/argocdapps.jpg' width='100%'>
 
