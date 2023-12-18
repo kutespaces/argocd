@@ -24,7 +24,7 @@ By the end of these exercises, you'll have a solid foundation in deploying and m
 
 ## Getting Started
 
-To begin, launch a new Codespace directly from GitHub.
+To begin, launch a new Codespace directly from this repository's GitHub page. The `Code` button is located in the topright corner where you would usually copy the URL to clone the repository.
 
 <img src='docs/images/start-codespace.jpg' width='50%'>
 
