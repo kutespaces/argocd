@@ -81,8 +81,7 @@ Here's a hands-on exercise to illustrate the power of GitOps:
 2. Dive into the `manifests/podinfo/resources/deployment.yaml`` file to see its configuration. Locate the `PODINFO_UI_COLOR` environment variable and update its value to the golden hue of `#FFD700`.
 3. add, commit, and push your changes to the git server. Remember to execute these git operations within the `./manifests` directory. This is a nested git repository.
 4. Run watch `kubectl get pods -n podinfo` to witness a rolling update in action. You'll see Kubernetes orchestrating a seamless transition by spinning up a new pod before retiring the old one.
-5. Wait up to three minutes or refresh the podinfo application in the Argo CD dashboard.
-6. Revel in your success as the podinfo app's background transforms to a brilliant gold. Here's a sneak peek of what to expect:
+5. Revel in your success as the podinfo app's background transforms to a brilliant gold. Here's a sneak peek of what to expect:
 
 
 <img src='docs/images/podinfogold.png' width='50%'>
@@ -93,9 +92,8 @@ The beauty of GitOps lies in its ability to seamlessly reflect your git reposito
 
 1. Whip open your terminal and run `git log` to retrieve the hash of the commit you wish to undo.
 2. Swiftly revert the change with `git revert <COMMIT HASH>` followed by `git push` to update the repository.
-3. Nudge the process along by refreshing the podinfo application within the Argo CD dashboard.
-4. Keep an eye on the transition by running `watch kubectl get pods -n podinfo`. This command lets you observe in real-time as Kubernetes orchestrates the replacement of the pod.
-5. Be greeted once more by the familiar, soothing jade green background of podinfo as the changes take hold.
+3. Keep an eye on the transition by running `watch kubectl get pods -n podinfo`. This command lets you observe in real-time as Kubernetes orchestrates the replacement of the pod.
+4. Be greeted once more by the familiar, soothing jade green background of podinfo as the changes take hold.
 
 ### Exercise 5: Unterstand GitOps End-to-End
 
