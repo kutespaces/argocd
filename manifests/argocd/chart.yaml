@@ -15,12 +15,12 @@ spec:
         hosts:
         - argocd.127.0.0.1.nip.io
     configs:
+      cm:
+        timeout.reconciliation: 5s
       secret:
         createSecret: false
       params:
         server.insecure: true
-        cm:
-          timeout.reconciliation: 30s
     notifications:
       enabled: false
     dex:
