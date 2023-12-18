@@ -55,11 +55,11 @@ Ensure the pod statuses are 'Completed' or 'Running'.
 
 ### Exercise 2: Access the Argo CD Dashboard
 
-Access the Argo CD dashboard through your browser. The URL format is `http://argocd.127.0.0.1.nip.io:<FORWARDED K3D INGRESS PORT>`. The load balancer listens on port 8080, which is forwarded to your local machine. Locate your local machine's corresponding port by opening your VS Code terminal and switching to the `PORTS` tab.
+Access the Argo CD dashboard through your browser. The URL format is `http://argocd.127.0.0.1.nip.io:<FORWARDED K3D INGRESS PORT>`. The load balancer listens on port 8080, which is forwarded to your local machine. Locate your local machine's corresponding port by opening your VS Code terminal and switching to the `PORTS` tab. In the below picture the `FORWARDED_K3D_INGRESS_PORT` is `64578`.
 
 <img src='docs/images/portforwarding.jpg' width='100%'>
 
-Login with the credentials `admin:admin` to view the dashboard. You should see the following 3 Argo CD applications.
+Login with the credentials `admin:admin` to view the dashboard. You should see the following 3 Argo CD applications. If it looks like below everything worked out!
 
 <img src='docs/images/argocdapps.jpg' width='100%'>
 
@@ -73,15 +73,15 @@ Login with the credentials `admin:admin` to view the dashboard. You should see t
 
 Your Kubernetes cluster is now home to two services: the classic game-2048 and the informative podinfo. Why not start by taking a look at the podinfo service? Simply head to `http://podinfo.127.0.0.1.nip.io:<FORWARDED K3D INGRESS PORT>` in your web browser.
 
-As we delve into the GitOps workflow, you'll find that the ./manifests directory houses a git repository tethered to an internal git server within your cluster. We'll elaborate on this connection shortly.
+As we delve into the GitOps workflow, you'll find that the `./manifests` directory houses a git repository connected to an internal git server within your cluster. We'll elaborate on this connection shortly.
 
 Here's a hands-on exercise to illustrate the power of GitOps:
 
 1. Open the podinfo app and observe its default jade green background.
-2. Dive into the manifests/podinfo/resources/deployment.yaml file to see its configuration. Locate the PODINFO_UI_COLOR environment variable and update its value to the golden hue of #FFD700.
-3. add, commit, and push your changes to the git server. Remember to execute these git operations within the ./manifests directory. This is a nested git repository.
-4. Run watch kubectl get pods -n podinfo to witness a rolling update in action. You'll see Kubernetes orchestrating a seamless transition by spinning up a new pod before retiring the old one.
-5. Give it up to three minutes or refresh the podinfo application in the Argo CD dashboard.
+2. Dive into the `manifests/podinfo/resources/deployment.yaml`` file to see its configuration. Locate the `PODINFO_UI_COLOR` environment variable and update its value to the golden hue of `#FFD700`.
+3. add, commit, and push your changes to the git server. Remember to execute these git operations within the `./manifests` directory. This is a nested git repository.
+4. Run watch `kubectl get pods -n podinfo` to witness a rolling update in action. You'll see Kubernetes orchestrating a seamless transition by spinning up a new pod before retiring the old one.
+5. Wait up to three minutes or refresh the podinfo application in the Argo CD dashboard.
 6. Revel in your success as the podinfo app's background transforms to a brilliant gold. Here's a sneak peek of what to expect:
 
 
@@ -124,13 +124,13 @@ stringData:
   insecure: 'true'
 ```
 
-This secret is crucial for connecting Argo CD to the git server. If SSH were used instead, this YAML would include the necessary SSH key.
+This secret is crucial for connecting Argo CD to the git server. In production this URL might refer to Github and we would use SSH instead of insecure http to connect to the repo.
 
 #### Argo CD Applications
 
-An Argo CD application is a custom resource that points to a specific folder and revision or branch in a git repository, dictating what Argo CD should deploy.
+An Argo CD application is a Kubernetes custom resource definition that points to a specific folder and revision or branch in a git repository, dictating what Argo CD should deploy.
 
-For example, the `app-of-apps.yaml` deployed during cluster setup is:
+For example, the `manifests/app-of-apps.yaml` deployed during cluster setup is:
 
 ```yaml
 # app-of-apps.yaml
@@ -142,20 +142,23 @@ source:
 ...
 ```
 
-This application points to the `./manifests/argocd-apps` directory containing additional application definitions. This "app of apps" pattern allows the deployment of a single application that, in turn, deploys other applications, which then deploy resources.
+This Argo CD application tells Argo CD that it should sync the folder `argocd-apps` from our local git repository `manifests` available at `http://git-repo-server.git-repo-server.svc.cluster.local:/git/manifests`. The `./manifests/argocd-apps` directory containis additional Argo CD applications. This pattern is called "app of apps" and allows the deployment of a single application that, in turn, deploys other applications, which then deploy their  Kubernetes resources.
 
 Within `./manifests/argocd-apps`, the `podinfo.yaml` file defines an application for the podinfo service:
 
 ```yaml
+# podinfo.yaml
+...
 source:
   path: podinfo
   repoURL: http://git-repo-server.git-repo-server.svc.cluster.local:/git/manifests
   targetRevision: main
+...
 ```
 
-The above tells Argo CD to apply the manifests located in `./manifests/podinfo`, which contain the configurations for the podinfo application.
+The above tells Argo CD to look into the manifests repository and apply the Kubernetes manifests located in `manifests/podinfo`.
 
-Take the time to inspect these files and understand each step of the GitOps workflow.
+Take your time to inspect these files and understand each step of the GitOps workflow.
 
 #### Applying Changes
 
