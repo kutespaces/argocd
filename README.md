@@ -22,7 +22,16 @@ As you embark on these exercises, you're set to learn key practices in modern ap
 
 By the end of these exercises, you'll have a solid foundation in deploying and managing Kubernetes applications using Argo CD.
 
+> Hint to advanced topics that are beneficial to expert users. Like:
+> * Develop Argo CD App Structure & test features in isolation
+> * Developing & validating [Plugins](https://argo-cd.readthedocs.io/en/stable/operator-manual/config-management-plugins/)
+> * [UI Customization](https://argo-cd.readthedocs.io/en/stable/operator-manual/ui-customization/) etc. without impacting the (usually) just one live Argo CD instance.
+> * Notifications
+> * all other advanced features
+
 ## Getting Started
+
+> Link to https://codespaces.new/kutespaces/argocd
 
 To begin, launch a new Codespace directly from this repository's GitHub page. The `Code` button is located in the topright corner where you would usually copy the URL to clone the repository.
 
@@ -79,9 +88,16 @@ Here's a hands-on exercise to illustrate the power of GitOps:
 
 1. Open the podinfo app and observe its default jade green background.
 2. Dive into the `manifests/podinfo/resources/deployment.yaml`` file to see its configuration. Locate the `PODINFO_UI_COLOR` environment variable and update its value to the golden hue of `#FFD700`.
+
+> Connecting the Git Repo Server with the Argo CD webhook would be user useful here to avoid confusion and automagically apply the updates.
+
 3. add, commit, and push your changes to the git server. Remember to execute these git operations within the `./manifests` directory. This is a nested git repository.
-4. Run watch `kubectl get pods -n podinfo` to witness a rolling update in action. You'll see Kubernetes orchestrating a seamless transition by spinning up a new pod before retiring the old one.
+
+4. Run `watch kubectl get pods -n podinfo` to witness a rolling update in action. You'll see Kubernetes orchestrating a seamless transition by spinning up a new pod before retiring the old one.
 5. Wait up to three minutes or refresh the podinfo application in the Argo CD dashboard.
+
+> Telling the user to wait 3 mins is super lame… I'd just say "click refresh", or configure Argo CD to poll very often like 30s. Should be cheap inside the codespace.
+
 6. Revel in your success as the podinfo app's background transforms to a brilliant gold. Here's a sneak peek of what to expect:
 
 
@@ -92,12 +108,17 @@ Here's a hands-on exercise to illustrate the power of GitOps:
 The beauty of GitOps lies in its ability to seamlessly reflect your git repository's state onto your cluster. Should you decide that the golden glimmer of podinfo doesn't quite suit your taste, reverting is a breeze:
 
 1. Whip open your terminal and run `git log` to retrieve the hash of the commit you wish to undo.
+
+> Connect this with the Gitlens extension, e.g. link directly to Git history? Maybe too fancy for now.
+
 2. Swiftly revert the change with `git revert <COMMIT HASH>` followed by `git push` to update the repository.
 3. Nudge the process along by refreshing the podinfo application within the Argo CD dashboard.
 4. Keep an eye on the transition by running `watch kubectl get pods -n podinfo`. This command lets you observe in real-time as Kubernetes orchestrates the replacement of the pod.
 5. Be greeted once more by the familiar, soothing jade green background of podinfo as the changes take hold.
 
-### Exercise 5: Unterstand GitOps End-to-End
+### Exercise 5: Understand GitOps End-to-End
+
+> Move this to the end? This is the most complex part and while it's super useful to know the components, the normal workflow is just GitHub, so most things are not directly applicable
 
 This section explains the GitOps workflow we've used to update a Kubernetes resource YAML file, push the change to our git server, and have it automatically applied. Take your time to understand the file structure and the interaction of the components.
 
