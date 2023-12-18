@@ -95,7 +95,13 @@ The beauty of GitOps lies in its ability to seamlessly reflect your git reposito
 3. Keep an eye on the transition by running `watch kubectl get pods -n podinfo`. This command lets you observe in real-time as Kubernetes orchestrates the replacement of the pod.
 4. Be greeted once more by the familiar, soothing jade green background of podinfo as the changes take hold.
 
-### Exercise 5: Unterstand GitOps End-to-End
+### Exercise 5: Play Game 2048
+
+Take a break and enjoy the game 2048, deployed using the same GitOps principles. Visit `http://game-2048.127.0.0.1.nip.io:<FORWARDED K3D INGRESS PORT>`.
+
+<img src='docs/images/2048.png' width='33%'>
+
+### Exercise 6: Unterstand GitOps End-to-End
 
 This section explains the GitOps workflow we've used to update a Kubernetes resource YAML file, push the change to our git server, and have it automatically applied. Take your time to understand the file structure and the interaction of the components.
 
@@ -164,28 +170,21 @@ When you push changes to the `manifests` repository, Argo CD detects the updates
 
 Please ensure you understand the connection between the git repository, Argo CD, and the Kubernetes resources to fully grasp the GitOps workflow.
 
-### Exercise 6: Play Game 2048
-
-Take a break and enjoy the game 2048, deployed using the same GitOps principles. Visit `http://game-2048.127.0.0.1.nip.io:<FORWARDED K3D INGRESS PORT>`.
-
-<img src='docs/images/2048.png' width='33%'>
-
 ### Exercise 7: Deploy Your Own Application
 
 Now it's time to deploy an application of your choice. Use the manifests for Podinfo (`./manifests/podinfo`) and Game 2048 (`./manifests/game-2048`) as a starting point to create your own.
 
-1. Select an application to deploy, such as [Kanboard](https://docs.kanboard.org/v1/admin/docker/), and prepare its Docker deployment configuration.
+1. Select a dockerized application to deploy such as the docker image `nginx:latest`.
 
-2. Copy the structure of the `podinfo` or `game-2048` manifest directories and update the Kubernetes manifests for your application.
+2. Copy the structure of the `game-2048` manifest directory and update the Kubernetes manifests to fit your application.
 
-3. Create a new Argo CD application manifest in `./manifests/argocd-apps`, modeled after the existing examples.
+3. Create a new Argo CD application manifest in `./manifests/argocd-apps`, modeled after the game-2048 application.
 
-4. Instead of applying your application manifest directly, add it to `manifests/argocd-apps/kustomization.yaml` which is deployed via the Argo CD application `manifests/app-of-apps.yaml`.
+4. Add the path to your Argo CD application in `manifests/argocd-apps/kustomization.yaml` which is deployed via the Argo CD application `manifests/app-of-apps.yaml`.
 
 5. Commit and push your changes to the repository, then watch Argo CD automatically deploy your application through the 'app-of-apps' approach.
 
-Remember, your application will be accessible via `http://<your-app-name>.127.0.0.1.nip.io:<FORWARDED K3D INGRESS PORT>`. Use the default credentials `admin:admin` if deploying Kanboard.
-
+Remember, your application will be accessible via `http://<your-app-name>.127.0.0.1.nip.io:<FORWARDED K3D INGRESS PORT>`.
 
 ### Exercise 8: Real-World Multi-Stage Deployment
 
