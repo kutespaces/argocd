@@ -184,7 +184,7 @@ Now it's time to deploy an application of your choice. Use the manifests for Pod
 
 5. Commit and push your changes to the repository, then watch Argo CD automatically deploy your application through the 'app-of-apps' approach.
 
-Remember, your application will be accessible via `http://<your-app-name>.127.0.0.1.nip.io:<FORWARDED K3D INGRESS PORT>`.
+You should now be able to access your application via `http://<your-app-name>.127.0.0.1.nip.io:<FORWARDED K3D INGRESS PORT>`.
 
 ### Exercise 8: Real-World Multi-Stage Deployment
 
