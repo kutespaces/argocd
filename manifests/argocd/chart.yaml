@@ -7,7 +7,7 @@ spec:
   repo: https://argoproj.github.io/argo-helm
   chart: argo-cd
   # https://artifacthub.io/packages/helm/argo/argo-cd
-  version: '5.32.0'
+  version: '5.51.6'
   valuesContent: |-
     server:
       ingress:
@@ -20,7 +20,7 @@ spec:
       params:
         server.insecure: true
         cm:
-          timeout.reconciliation: 15s
+          timeout.reconciliation: 30s
     notifications:
       enabled: false
     dex:
