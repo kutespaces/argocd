@@ -78,9 +78,9 @@ As we delve into the GitOps workflow, you'll find that the `./manifests` directo
 Here's a hands-on exercise to illustrate the power of GitOps:
 
 1. Open the podinfo app and observe its default jade green background.
-2. Dive into the `manifests/podinfo/resources/deployment.yaml`` file to see its configuration. Locate the `PODINFO_UI_COLOR` environment variable and update its value to the golden hue of `#FFD700`.
+2. Dive into the `manifests/podinfo/resources/deployment.yaml` file to see its configuration. Locate the `PODINFO_UI_COLOR` environment variable and update its value to the golden hue of `#FFD700`.
 3. add, commit, and push your changes to the git server. Remember to execute these git operations within the `./manifests` directory. This is a nested git repository.
-4. Run watch `kubectl get pods -n podinfo` to witness a rolling update in action. You'll see Kubernetes orchestrating a seamless transition by spinning up a new pod before retiring the old one.
+4. Run `watch kubectl get pods -n podinfo` to witness a rolling update in action. You'll see Kubernetes orchestrating a seamless transition by spinning up a new pod before retiring the old one.
 5. Revel in your success as the podinfo app's background transforms to a brilliant gold. Here's a sneak peek of what to expect:
 
 
