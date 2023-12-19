@@ -73,7 +73,7 @@ Login with the credentials `admin:admin` to view the dashboard. You should see t
 
 Your Kubernetes cluster is now home to two services: the classic game-2048 and the informative podinfo. Why not start by taking a look at the podinfo service? Simply head to `http://podinfo.127.0.0.1.nip.io:<FORWARDED K3D INGRESS PORT>` in your web browser.
 
-As we delve into the GitOps workflow, you'll find that the `./manifests` directory houses a git repository connected to an internal git server within your cluster. We'll elaborate on this connection shortly.
+As we delve into the GitOps workflow, you'll find that the `./manifests` directory houses a nested git repository connected to an internal git server within your cluster. We'll elaborate on this connection shortly.
 
 Here's a hands-on exercise to illustrate the power of GitOps:
 
@@ -82,7 +82,6 @@ Here's a hands-on exercise to illustrate the power of GitOps:
 3. add, commit, and push your changes to the git server. Remember to execute these git operations within the `./manifests` directory. This is a nested git repository.
 4. Run `watch kubectl get pods -n podinfo` to witness a rolling update in action. You'll see Kubernetes orchestrating a seamless transition by spinning up a new pod before retiring the old one.
 5. Revel in your success as the podinfo app's background transforms to a brilliant gold. Here's a sneak peek of what to expect:
-
 
 <img src='docs/images/podinfogold.png' width='50%'>
 
