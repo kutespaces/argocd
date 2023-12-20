@@ -24,14 +24,12 @@ By the end of these exercises, you'll have a solid foundation in deploying and m
 
 ## Getting Started
 
-To begin, launch a new Codespace directly from this repository's GitHub page. The `Code` button is located in the topright corner where you would usually copy the URL to clone the repository.
+To begin, [launch a new Codespace using the default settings.](https://codespaces.new/kutespaces/argocd)
 
-<img src='docs/images/start-codespace.jpg' width='50%'>
+Running this Codespace in the browser will not work. As soon as the code space is ready, launch it in your local VS Code Desktop.
+To do so extend the menu in the left upper corner and select `Open in VS Code Desktop`.
 
-Once you started the Codespace it will open in a new browser window. Close that browser window and start the Codespace in VSCode instead.
-Codespaces in the browser are not supported yet.
-
-<img src='docs/images/openinvscode.jpg' width='50%'>
+<img src='docs/images/start-codespace-vscode.jpg' width='50%'>
 
 ## Exercises
 
