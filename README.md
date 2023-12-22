@@ -53,7 +53,7 @@ Ensure the pod statuses are 'Completed' or 'Running'.
 
 ### Exercise 2: Access the Argo CD Dashboard
 
-Access the Argo CD dashboard through your browser. The URL format is `http://argocd.127.0.0.1.nip.io:<FORWARDED K3D INGRESS PORT>`. The load balancer listens on port 8080, which is forwarded to your local machine. Locate your local machine's corresponding port by opening your VS Code terminal and switching to the `PORTS` tab. In the below picture the `FORWARDED_K3D_INGRESS_PORT` is `64578`.
+Access the Argo CD dashboard through your browser. The URL format is `http://argocd.127.0.0.1.nip.io:<FORWARDED K3D INGRESS PORT>`. The load balancer listens on port 8080, which is forwarded to your local machine. Locate your local machine's corresponding port by opening your VS Code terminal and switching to the `PORTS` tab. Usually `FORWARDED_K3D_INGRESS_PORT` will be `8080`. However, in the below example it is `64578` because 8080 was taken on my machine. 
 
 <img src='docs/images/portforwarding.jpg' width='100%'>
 
