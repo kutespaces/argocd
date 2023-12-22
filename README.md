@@ -31,6 +31,8 @@ To do so extend the menu in the left upper corner and select `Open in VS Code De
 
 <img src='docs/images/start-codespace-vscode.jpg' width='50%'>
 
+To properly view the rendered README either view it in your browser or open the Command Palette (Ctrl+Shift+P) and select `Markdown: Open Preview`.
+
 ## Exercises
 
 ### Exercise 1: Verify the Kubernetes Setup
